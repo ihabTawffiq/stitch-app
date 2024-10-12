@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 @Getter
 @Setter
-public class Brand {
+public class Category {
 
     @Id
     private Long id;
@@ -22,9 +22,5 @@ public class Brand {
 
     @Size(max = 1080)
     private String description;
-
-    @NotNull
-    @Size(max = 1080)
-    private String logoURL;
 
 }

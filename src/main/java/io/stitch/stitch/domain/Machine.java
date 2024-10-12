@@ -18,8 +18,9 @@ public class Machine {
     @Id
     private Long id;
 
+    @NotNull
     @Size(max = 255)
-    private String title;
+    private String model;
 
     @Size(max = 1080)
     private String description;
@@ -29,6 +30,7 @@ public class Machine {
     @Size(max = 1080)
     private String mainImageUrl;
 
+    @NotNull
     private Double finalPrice;
 
     private Double initialPrice;
@@ -38,10 +40,10 @@ public class Machine {
     private Brand brand;
 
     @DocumentReference(lazy = true)
-    @NotNull
-    private Model model;
+    private Set<Tag> tags;
 
     @DocumentReference(lazy = true)
-    private Set<Tag> tags;
+    @NotNull
+    private Category category;
 
 }

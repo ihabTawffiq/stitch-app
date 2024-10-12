@@ -1,19 +1,15 @@
-package io.stitch.stitch.domain;
+package io.stitch.stitch.model;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 
-@Document
 @Getter
 @Setter
-public class Brand {
+public class CategoryDTO {
 
-    @Id
     private Long id;
 
     @NotNull
@@ -22,9 +18,5 @@ public class Brand {
 
     @Size(max = 1080)
     private String description;
-
-    @NotNull
-    @Size(max = 1080)
-    private String logoURL;
 
 }

@@ -13,8 +13,9 @@ public class MachineDTO {
 
     private Long id;
 
+    @NotNull
     @Size(max = 255)
-    private String title;
+    private String model;
 
     @Size(max = 1080)
     private String description;
@@ -24,6 +25,7 @@ public class MachineDTO {
     @Size(max = 1080)
     private String mainImageUrl;
 
+    @NotNull
     private Double finalPrice;
 
     private Double initialPrice;
@@ -31,9 +33,9 @@ public class MachineDTO {
     @NotNull
     private Long brand;
 
-    @NotNull
-    private Long model;
-
     private List<Long> tags;
+
+    @NotNull
+    private Long category;
 
 }
