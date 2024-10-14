@@ -25,14 +25,16 @@ public class MachineService {
     private final BrandRepository brandRepository;
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
+    private final PrimarySequenceService primarySequenceService;
 
     public MachineService(final MachineRepository machineRepository,
-            final BrandRepository brandRepository, final TagRepository tagRepository,
-            final CategoryRepository categoryRepository) {
+                          final BrandRepository brandRepository, final TagRepository tagRepository,
+                          final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService) {
         this.machineRepository = machineRepository;
         this.brandRepository = brandRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
+        this.primarySequenceService = primarySequenceService;
     }
 
     public List<MachineDTO> findAll() {
@@ -50,6 +52,7 @@ public class MachineService {
 
     public Long create(final MachineDTO machineDTO) {
         final Machine machine = new Machine();
+        machine.setId(primarySequenceService.getNextValue());
         mapToEntity(machineDTO, machine);
         return machineRepository.save(machine).getId();
     }

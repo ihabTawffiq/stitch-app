@@ -6,18 +6,21 @@ import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.repos.TagRepository;
 import io.stitch.stitch.util.NotFoundException;
 import java.util.List;
+import java.util.Objects;
+
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 
 @Service
 public class TagService {
-
+    private final PrimarySequenceService primarySequenceService;
     private final TagRepository tagRepository;
     private final MachineRepository machineRepository;
 
-    public TagService(final TagRepository tagRepository,
-            final MachineRepository machineRepository) {
+    public TagService(PrimarySequenceService primarySequenceService, final TagRepository tagRepository,
+                      final MachineRepository machineRepository) {
+        this.primarySequenceService = primarySequenceService;
         this.tagRepository = tagRepository;
         this.machineRepository = machineRepository;
     }
@@ -37,6 +40,7 @@ public class TagService {
 
     public Long create(final TagDTO tagDTO) {
         final Tag tag = new Tag();
+        tag.setId(primarySequenceService.getNextValue());
         mapToEntity(tagDTO, tag);
         return tagRepository.save(tag).getId();
     }

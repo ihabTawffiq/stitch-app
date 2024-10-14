@@ -17,11 +17,13 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
     private final MachineRepository machineRepository;
+    private final PrimarySequenceService primarySequenceService;
 
     public CategoryService(final CategoryRepository categoryRepository,
-            final MachineRepository machineRepository) {
+                           final MachineRepository machineRepository, PrimarySequenceService primarySequenceService) {
         this.categoryRepository = categoryRepository;
         this.machineRepository = machineRepository;
+        this.primarySequenceService = primarySequenceService;
     }
 
     public List<CategoryDTO> findAll() {
@@ -39,6 +41,7 @@ public class CategoryService {
 
     public Long create(final CategoryDTO categoryDTO) {
         final Category category = new Category();
+        category.setId(primarySequenceService.getNextValue());
         mapToEntity(categoryDTO, category);
         return categoryRepository.save(category).getId();
     }

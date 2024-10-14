@@ -17,11 +17,13 @@ public class BrandService {
 
     private final BrandRepository brandRepository;
     private final MachineRepository machineRepository;
+    private final PrimarySequenceService primarySequenceService;
 
     public BrandService(final BrandRepository brandRepository,
-            final MachineRepository machineRepository) {
+                        final MachineRepository machineRepository, PrimarySequenceService primarySequenceService) {
         this.brandRepository = brandRepository;
         this.machineRepository = machineRepository;
+        this.primarySequenceService = primarySequenceService;
     }
 
     public List<BrandDTO> findAll() {
@@ -39,6 +41,7 @@ public class BrandService {
 
     public Long create(final BrandDTO brandDTO) {
         final Brand brand = new Brand();
+        brand.setId(primarySequenceService.getNextValue());
         mapToEntity(brandDTO, brand);
         return brandRepository.save(brand).getId();
     }
