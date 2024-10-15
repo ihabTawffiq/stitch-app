@@ -1,6 +1,6 @@
-package io.stitch.stitch.rest;
+package io.stitch.stitch.controller;
 
-import io.stitch.stitch.model.TagDTO;
+import io.stitch.stitch.dto.TagDTO;
 import io.stitch.stitch.service.TagService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/tags", produces = MediaType.APPLICATION_JSON_VALUE)
-public class TagResource {
+public class TagController {
 
     private final TagService tagService;
 
-    public TagResource(final TagService tagService) {
+    public TagController(final TagService tagService) {
         this.tagService = tagService;
     }
 

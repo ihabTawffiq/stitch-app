@@ -1,8 +1,8 @@
 package io.stitch.stitch.service;
 
-import io.stitch.stitch.domain.Category;
-import io.stitch.stitch.domain.Machine;
-import io.stitch.stitch.model.CategoryDTO;
+import io.stitch.stitch.entity.Category;
+import io.stitch.stitch.entity.Machine;
+import io.stitch.stitch.dto.CategoryDTO;
 import io.stitch.stitch.repos.CategoryRepository;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.util.NotFoundException;

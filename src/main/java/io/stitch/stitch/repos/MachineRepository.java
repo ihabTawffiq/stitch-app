@@ -1,9 +1,9 @@
 package io.stitch.stitch.repos;
 
-import io.stitch.stitch.domain.Brand;
-import io.stitch.stitch.domain.Category;
-import io.stitch.stitch.domain.Machine;
-import io.stitch.stitch.domain.Tag;
+import io.stitch.stitch.entity.Brand;
+import io.stitch.stitch.entity.Category;
+import io.stitch.stitch.entity.Machine;
+import io.stitch.stitch.entity.Tag;
 import java.util.List;
 import org.springframework.data.mongodb.repository.MongoRepository;
 

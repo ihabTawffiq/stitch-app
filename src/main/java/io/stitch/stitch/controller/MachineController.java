@@ -1,6 +1,6 @@
-package io.stitch.stitch.rest;
+package io.stitch.stitch.controller;
 
-import io.stitch.stitch.model.MachineDTO;
+import io.stitch.stitch.dto.MachineDTO;
 import io.stitch.stitch.service.MachineService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -20,11 +20,11 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/api/machines", produces = MediaType.APPLICATION_JSON_VALUE)
-public class MachineResource {
+public class MachineController {
 
     private final MachineService machineService;
 
-    public MachineResource(final MachineService machineService) {
+    public MachineController(final MachineService machineService) {
         this.machineService = machineService;
     }
 

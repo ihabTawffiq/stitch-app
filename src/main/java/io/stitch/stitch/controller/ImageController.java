@@ -1,4 +1,4 @@
-package io.stitch.stitch.rest;
+package io.stitch.stitch.controller;
 
 import io.stitch.stitch.util.CloudinaryManager;
 import jakarta.validation.Valid;
@@ -13,10 +13,10 @@ import java.io.IOException;
 
 @RestController
 @RequestMapping(value = "/api/images")
-public class UploadImage {
+public class ImageController {
     private final CloudinaryManager cloudinaryManager;
 
-    public UploadImage(CloudinaryManager cloudinaryManager) {
+    public ImageController(CloudinaryManager cloudinaryManager) {
         this.cloudinaryManager = cloudinaryManager;
     }
 

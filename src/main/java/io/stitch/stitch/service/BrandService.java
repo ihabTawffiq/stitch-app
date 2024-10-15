@@ -1,8 +1,8 @@
 package io.stitch.stitch.service;
 
-import io.stitch.stitch.domain.Brand;
-import io.stitch.stitch.domain.Machine;
-import io.stitch.stitch.model.BrandDTO;
+import io.stitch.stitch.entity.Brand;
+import io.stitch.stitch.entity.Machine;
+import io.stitch.stitch.dto.BrandDTO;
 import io.stitch.stitch.repos.BrandRepository;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.util.NotFoundException;

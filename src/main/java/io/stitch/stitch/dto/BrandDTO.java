@@ -1,4 +1,4 @@
-package io.stitch.stitch.model;
+package io.stitch.stitch.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -8,7 +8,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class TagDTO {
+public class BrandDTO {
 
     private Long id;
 
@@ -18,5 +18,9 @@ public class TagDTO {
 
     @Size(max = 1080)
     private String description;
+
+    @NotNull
+    @Size(max = 1080)
+    private String logoURL;
 
 }

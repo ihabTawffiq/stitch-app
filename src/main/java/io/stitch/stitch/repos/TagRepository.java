@@ -1,6 +1,6 @@
 package io.stitch.stitch.repos;
 
-import io.stitch.stitch.domain.Tag;
+import io.stitch.stitch.entity.Tag;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 

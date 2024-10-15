@@ -1,4 +1,4 @@
-package io.stitch.stitch.domain;
+package io.stitch.stitch.entity;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -11,7 +11,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 @Getter
 @Setter
-public class Category {
+public class Brand {
 
     @Id
     private Long id;
@@ -22,5 +22,9 @@ public class Category {
 
     @Size(max = 1080)
     private String description;
+
+    @NotNull
+    @Size(max = 1080)
+    private String logoURL;
 
 }

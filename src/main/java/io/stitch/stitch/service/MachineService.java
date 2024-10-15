@@ -1,10 +1,10 @@
 package io.stitch.stitch.service;
 
-import io.stitch.stitch.domain.Brand;
-import io.stitch.stitch.domain.Category;
-import io.stitch.stitch.domain.Machine;
-import io.stitch.stitch.domain.Tag;
-import io.stitch.stitch.model.MachineDTO;
+import io.stitch.stitch.entity.Brand;
+import io.stitch.stitch.entity.Category;
+import io.stitch.stitch.entity.Machine;
+import io.stitch.stitch.entity.Tag;
+import io.stitch.stitch.dto.MachineDTO;
 import io.stitch.stitch.repos.BrandRepository;
 import io.stitch.stitch.repos.CategoryRepository;
 import io.stitch.stitch.repos.MachineRepository;

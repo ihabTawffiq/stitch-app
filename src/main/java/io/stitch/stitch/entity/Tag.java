@@ -1,15 +1,19 @@
-package io.stitch.stitch.model;
+package io.stitch.stitch.entity;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.mongodb.core.mapping.Document;
 
 
+@Document
 @Getter
 @Setter
-public class CategoryDTO {
+public class Tag {
 
+    @Id
     private Long id;
 
     @NotNull

@@ -1,12 +1,11 @@
 package io.stitch.stitch.service;
 
-import io.stitch.stitch.domain.Tag;
-import io.stitch.stitch.model.TagDTO;
+import io.stitch.stitch.entity.Tag;
+import io.stitch.stitch.dto.TagDTO;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.repos.TagRepository;
 import io.stitch.stitch.util.NotFoundException;
 import java.util.List;
-import java.util.Objects;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;

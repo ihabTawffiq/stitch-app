@@ -1,6 +1,6 @@
 package io.stitch.stitch.repos;
 
-import io.stitch.stitch.domain.Model;
+import io.stitch.stitch.entity.Model;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 

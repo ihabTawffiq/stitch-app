@@ -1,21 +1,16 @@
-package io.stitch.stitch.domain;
+package io.stitch.stitch.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import java.util.Set;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 
-@Document
 @Getter
 @Setter
-public class Machine {
+public class MachineDTO {
 
-    @Id
     private Long id;
 
     @NotNull
@@ -35,15 +30,12 @@ public class Machine {
 
     private Double initialPrice;
 
-    @DocumentReference(lazy = true)
     @NotNull
-    private Brand brand;
+    private Long brand;
 
-    @DocumentReference(lazy = true)
-    private Set<Tag> tags;
+    private List<Long> tags;
 
-    @DocumentReference(lazy = true)
     @NotNull
-    private Category category;
+    private Long category;
 
 }

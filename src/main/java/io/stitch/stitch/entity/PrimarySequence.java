@@ -1,4 +1,4 @@
-package io.stitch.stitch.domain;
+package io.stitch.stitch.entity;
 
 import lombok.Getter;
 import lombok.Setter;

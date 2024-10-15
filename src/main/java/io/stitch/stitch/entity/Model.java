@@ -1,4 +1,4 @@
-package io.stitch.stitch.domain;
+package io.stitch.stitch.entity;
 
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
