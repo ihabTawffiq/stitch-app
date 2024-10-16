@@ -1,10 +1,17 @@
 package io.stitch.stitch.service;
 
+import io.stitch.stitch.dto.BrandDTO;
+import io.stitch.stitch.dto.CategoryDTO;
 import io.stitch.stitch.dto.MachineDTO;
+import io.stitch.stitch.dto.TagDTO;
+import io.stitch.stitch.dto.app.AppMachineDTO;
 import io.stitch.stitch.entity.Brand;
 import io.stitch.stitch.entity.Category;
 import io.stitch.stitch.entity.Machine;
 import io.stitch.stitch.entity.Tag;
+import io.stitch.stitch.mappers.BrandMapper;
+import io.stitch.stitch.mappers.CategoryMapper;
+import io.stitch.stitch.mappers.TagMapper;
 import io.stitch.stitch.repos.BrandRepository;
 import io.stitch.stitch.repos.CategoryRepository;
 import io.stitch.stitch.repos.MachineRepository;
@@ -62,15 +69,15 @@ public class MachineService {
         machineRepository.deleteById(id);
     }
 
-    public List<MachineDTO> getMachinesByTag(final Long[] tagIds) {
+    public List<AppMachineDTO> getMachinesByTag(final Long[] tagIds) {
         List<Machine> machineList = new ArrayList<>();
         for (long id : tagIds) {
             Tag tag = tagRepository.findById(id).orElseThrow(NotFoundException::new);
             machineList.addAll(machineRepository.findAllByTags(tag));
         }
-        List<MachineDTO> machineDTOList = new ArrayList<>();
+        List<AppMachineDTO> machineDTOList = new ArrayList<>();
         for (Machine machine : machineList) {
-            machineDTOList.add(mapToDTO(machine, new MachineDTO()));
+            machineDTOList.add(mapToAppDTO(machine, new AppMachineDTO()));
         }
         return machineDTOList;
     }
@@ -106,6 +113,20 @@ public class MachineService {
         final Category category = machineDTO.getCategory() == null ? null : categoryRepository.findById(machineDTO.getCategory()).orElseThrow(() -> new NotFoundException("category not found"));
         machine.setCategory(category);
         return machine;
+    }
+
+    private AppMachineDTO mapToAppDTO(final Machine machine, final AppMachineDTO machineDTO) {
+        machineDTO.setId(machine.getId());
+        machineDTO.setModel(machine.getModel());
+        machineDTO.setDescription(machine.getDescription());
+        machineDTO.setStock(machine.getStock());
+        machineDTO.setMainImageUrl(machine.getMainImageUrl());
+        machineDTO.setFinalPrice(machine.getFinalPrice());
+        machineDTO.setInitialPrice(machine.getInitialPrice());
+        machineDTO.setBrand(machine.getBrand() == null ? null : BrandMapper.mapToAppDTO(machine.getBrand(),new BrandDTO()));
+        machineDTO.setTags(machine.getTags().stream().map(tag -> TagMapper.mapToAppDTO(tag,new TagDTO())).toList());
+        machineDTO.setCategory(machine.getCategory() == null ? null : CategoryMapper.mapToAppDTO(machine.getCategory(),new CategoryDTO()));
+        return machineDTO;
     }
 
     private <T> List<T> iterableToList(final Iterable<T> iterable) {

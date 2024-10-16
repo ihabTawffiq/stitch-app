@@ -1,6 +1,7 @@
 package io.stitch.stitch.controller;
 
 import io.stitch.stitch.dto.MachineDTO;
+import io.stitch.stitch.dto.app.AppMachineDTO;
 import io.stitch.stitch.service.MachineService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -27,8 +28,8 @@ public class MachineController {
         return ResponseEntity.ok(machineService.findAll());
     }
 
-    @GetMapping("/by-tag-id")
-    public ResponseEntity<List<MachineDTO>> getMachineByTag(@RequestParam(name = "tagId") Long[] ids) {
+    @GetMapping("/app/by-tag-id")
+    public ResponseEntity<List<AppMachineDTO>> getMachineByTag(@RequestParam(name = "tagId") Long[] ids) {
         return ResponseEntity.ok(machineService.getMachinesByTag(ids));
     }
 
