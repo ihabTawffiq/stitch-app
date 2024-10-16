@@ -33,6 +33,10 @@ public class MachineController {
         return ResponseEntity.ok(machineService.findAll());
     }
 
+    @GetMapping("tag/{id}")
+    public ResponseEntity<List<MachineDTO>> getMachineByTag(@PathVariable final Long id) {
+        return  ResponseEntity.ok(machineService.getMachinesByTag(id));
+    }
     @GetMapping("/{id}")
     public ResponseEntity<MachineDTO> getMachine(@PathVariable(name = "id") final Long id) {
         return ResponseEntity.ok(machineService.get(id));

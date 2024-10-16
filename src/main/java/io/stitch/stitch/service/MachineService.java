@@ -1,5 +1,6 @@
 package io.stitch.stitch.service;
 
+import io.stitch.stitch.dto.TagDTO;
 import io.stitch.stitch.entity.Brand;
 import io.stitch.stitch.entity.Category;
 import io.stitch.stitch.entity.Machine;
@@ -26,15 +27,17 @@ public class MachineService {
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
     private final PrimarySequenceService primarySequenceService;
+    private final TagService tagService;
 
     public MachineService(final MachineRepository machineRepository,
                           final BrandRepository brandRepository, final TagRepository tagRepository,
-                          final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService) {
+                          final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService, TagService tagService) {
         this.machineRepository = machineRepository;
         this.brandRepository = brandRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
         this.primarySequenceService = primarySequenceService;
+        this.tagService = tagService;
     }
 
     public List<MachineDTO> findAll() {
@@ -66,6 +69,20 @@ public class MachineService {
 
     public void delete(final Long id) {
         machineRepository.deleteById(id);
+    }
+
+    public List<MachineDTO> getMachinesByTag(final Long tagId){
+        TagDTO tagDTO = tagService.get(tagId);
+        Tag tag  = new Tag();
+        tag.setId(tagDTO.getId());
+        tag.setName(tagDTO.getName());
+        tag.setDescription(tagDTO.getDescription());
+        List<Machine> machineList = machineRepository.findAllByTags(tag);
+        List<MachineDTO> machineDTOList = new ArrayList<>();
+        for (Machine machine : machineList) {
+            machineDTOList.add(mapToDTO(machine, new MachineDTO()));
+        }
+        return machineDTOList;
     }
 
     private MachineDTO mapToDTO(final Machine machine, final MachineDTO machineDTO) {
