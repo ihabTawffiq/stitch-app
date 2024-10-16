@@ -1,22 +1,22 @@
 package io.stitch.stitch.service;
 
-import io.stitch.stitch.dto.TagDTO;
+import io.stitch.stitch.dto.MachineDTO;
 import io.stitch.stitch.entity.Brand;
 import io.stitch.stitch.entity.Category;
 import io.stitch.stitch.entity.Machine;
 import io.stitch.stitch.entity.Tag;
-import io.stitch.stitch.dto.MachineDTO;
 import io.stitch.stitch.repos.BrandRepository;
 import io.stitch.stitch.repos.CategoryRepository;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.repos.TagRepository;
 import io.stitch.stitch.util.NotFoundException;
+import org.springframework.data.domain.Sort;
+import org.springframework.stereotype.Service;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import org.springframework.data.domain.Sort;
-import org.springframework.stereotype.Service;
 
 
 @Service
@@ -27,30 +27,22 @@ public class MachineService {
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
     private final PrimarySequenceService primarySequenceService;
-    private final TagService tagService;
 
-    public MachineService(final MachineRepository machineRepository,
-                          final BrandRepository brandRepository, final TagRepository tagRepository,
-                          final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService, TagService tagService) {
+    public MachineService(final MachineRepository machineRepository, final BrandRepository brandRepository, final TagRepository tagRepository, final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService) {
         this.machineRepository = machineRepository;
         this.brandRepository = brandRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
         this.primarySequenceService = primarySequenceService;
-        this.tagService = tagService;
     }
 
     public List<MachineDTO> findAll() {
         final List<Machine> machines = machineRepository.findAll(Sort.by("id"));
-        return machines.stream()
-                .map(machine -> mapToDTO(machine, new MachineDTO()))
-                .toList();
+        return machines.stream().map(machine -> mapToDTO(machine, new MachineDTO())).toList();
     }
 
     public MachineDTO get(final Long id) {
-        return machineRepository.findById(id)
-                .map(machine -> mapToDTO(machine, new MachineDTO()))
-                .orElseThrow(NotFoundException::new);
+        return machineRepository.findById(id).map(machine -> mapToDTO(machine, new MachineDTO())).orElseThrow(NotFoundException::new);
     }
 
     public Long create(final MachineDTO machineDTO) {
@@ -61,8 +53,7 @@ public class MachineService {
     }
 
     public void update(final Long id, final MachineDTO machineDTO) {
-        final Machine machine = machineRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+        final Machine machine = machineRepository.findById(id).orElseThrow(NotFoundException::new);
         mapToEntity(machineDTO, machine);
         machineRepository.save(machine);
     }
@@ -71,13 +62,12 @@ public class MachineService {
         machineRepository.deleteById(id);
     }
 
-    public List<MachineDTO> getMachinesByTag(final Long tagId){
-        TagDTO tagDTO = tagService.get(tagId);
-        Tag tag  = new Tag();
-        tag.setId(tagDTO.getId());
-        tag.setName(tagDTO.getName());
-        tag.setDescription(tagDTO.getDescription());
-        List<Machine> machineList = machineRepository.findAllByTags(tag);
+    public List<MachineDTO> getMachinesByTag(final Long[] tagIds) {
+        List<Machine> machineList = new ArrayList<>();
+        for (long id : tagIds) {
+            Tag tag = tagRepository.findById(id).orElseThrow(NotFoundException::new);
+            machineList.addAll(machineRepository.findAllByTags(tag));
+        }
         List<MachineDTO> machineDTOList = new ArrayList<>();
         for (Machine machine : machineList) {
             machineDTOList.add(mapToDTO(machine, new MachineDTO()));
@@ -94,9 +84,7 @@ public class MachineService {
         machineDTO.setFinalPrice(machine.getFinalPrice());
         machineDTO.setInitialPrice(machine.getInitialPrice());
         machineDTO.setBrand(machine.getBrand() == null ? null : machine.getBrand().getId());
-        machineDTO.setTags(machine.getTags().stream()
-                .map(tag -> tag.getId())
-                .toList());
+        machineDTO.setTags(machine.getTags().stream().map(tag -> tag.getId()).toList());
         machineDTO.setCategory(machine.getCategory() == null ? null : machine.getCategory().getId());
         return machineDTO;
     }
@@ -108,17 +96,14 @@ public class MachineService {
         machine.setMainImageUrl(machineDTO.getMainImageUrl());
         machine.setFinalPrice(machineDTO.getFinalPrice());
         machine.setInitialPrice(machineDTO.getInitialPrice());
-        final Brand brand = machineDTO.getBrand() == null ? null : brandRepository.findById(machineDTO.getBrand())
-                .orElseThrow(() -> new NotFoundException("brand not found"));
+        final Brand brand = machineDTO.getBrand() == null ? null : brandRepository.findById(machineDTO.getBrand()).orElseThrow(() -> new NotFoundException("brand not found"));
         machine.setBrand(brand);
-        final List<Tag> tags = iterableToList(tagRepository.findAllById(
-                machineDTO.getTags() == null ? Collections.emptyList() : machineDTO.getTags()));
+        final List<Tag> tags = iterableToList(tagRepository.findAllById(machineDTO.getTags() == null ? Collections.emptyList() : machineDTO.getTags()));
         if (tags.size() != (machineDTO.getTags() == null ? 0 : machineDTO.getTags().size())) {
             throw new NotFoundException("one of tags not found");
         }
         machine.setTags(new HashSet<>(tags));
-        final Category category = machineDTO.getCategory() == null ? null : categoryRepository.findById(machineDTO.getCategory())
-                .orElseThrow(() -> new NotFoundException("category not found"));
+        final Category category = machineDTO.getCategory() == null ? null : categoryRepository.findById(machineDTO.getCategory()).orElseThrow(() -> new NotFoundException("category not found"));
         machine.setCategory(category);
         return machine;
     }
