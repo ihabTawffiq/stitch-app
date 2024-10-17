@@ -5,6 +5,8 @@ import io.stitch.stitch.entity.Category;
 import io.stitch.stitch.entity.Machine;
 import io.stitch.stitch.entity.Tag;
 import java.util.List;
+import java.util.Set;
+
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 
@@ -17,5 +19,6 @@ public interface MachineRepository extends MongoRepository<Machine, Long> {
     Machine findFirstByCategory(Category category);
 
     List<Machine> findAllByTags(Tag tag);
+    List<Machine> findAllByTagsIdIn(Long[] id);
 
 }

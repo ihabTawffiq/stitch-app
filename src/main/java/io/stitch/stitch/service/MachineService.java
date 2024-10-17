@@ -70,11 +70,8 @@ public class MachineService {
     }
 
     public List<AppMachineDTO> getMachinesByTag(final Long[] tagIds) {
-        List<Machine> machineList = new ArrayList<>();
-        for (long id : tagIds) {
-            Tag tag = tagRepository.findById(id).orElseThrow(NotFoundException::new);
-            machineList.addAll(machineRepository.findAllByTags(tag));
-        }
+
+        List<Machine> machineList = machineRepository.findAllByTagsIdIn(tagIds);
         List<AppMachineDTO> machineDTOList = new ArrayList<>();
         for (Machine machine : machineList) {
             machineDTOList.add(mapToAppDTO(machine, new AppMachineDTO()));
@@ -123,9 +120,9 @@ public class MachineService {
         machineDTO.setMainImageUrl(machine.getMainImageUrl());
         machineDTO.setFinalPrice(machine.getFinalPrice());
         machineDTO.setInitialPrice(machine.getInitialPrice());
-        machineDTO.setBrand(machine.getBrand() == null ? null : BrandMapper.mapToAppDTO(machine.getBrand(),new BrandDTO()));
-        machineDTO.setTags(machine.getTags().stream().map(tag -> TagMapper.mapToAppDTO(tag,new TagDTO())).toList());
-        machineDTO.setCategory(machine.getCategory() == null ? null : CategoryMapper.mapToAppDTO(machine.getCategory(),new CategoryDTO()));
+        machineDTO.setBrand(machine.getBrand() == null ? null : BrandMapper.mapToAppDTO(machine.getBrand(), new BrandDTO()));
+        machineDTO.setTags(machine.getTags().stream().map(tag -> TagMapper.mapToAppDTO(tag, new TagDTO())).toList());
+        machineDTO.setCategory(machine.getCategory() == null ? null : CategoryMapper.mapToAppDTO(machine.getCategory(), new CategoryDTO()));
         return machineDTO;
     }
 
