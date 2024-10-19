@@ -4,11 +4,9 @@ import io.stitch.stitch.entity.Brand;
 import io.stitch.stitch.entity.Category;
 import io.stitch.stitch.entity.Machine;
 import io.stitch.stitch.entity.Tag;
-import java.util.List;
-
-import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
+import java.util.List;
 
 public interface MachineRepository extends MongoRepository<Machine, Long> {
 
