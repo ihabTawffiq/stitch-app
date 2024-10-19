@@ -39,6 +39,12 @@ public class MachineController {
         return ResponseEntity.ok(machineService.getMachinesByCategory(id));
     }
 
+    @GetMapping("/app/by-brand-id")
+    public ResponseEntity<List<AppMachineDTO>> getMachineByBrand(@RequestParam(name = "brandId") Long id) {
+        return ResponseEntity.ok(machineService.getMachinesByBrand(id));
+    }
+
+
 
 
     @GetMapping("/{id}")
