@@ -24,7 +24,7 @@ public class MachineController {
     }
 
     @GetMapping
-    public ResponseEntity<List<MachineDTO>> getAllMachines() {
+    public ResponseEntity<List<AppMachineDTO>> getAllMachines() {
         return ResponseEntity.ok(machineService.findAll());
     }
 

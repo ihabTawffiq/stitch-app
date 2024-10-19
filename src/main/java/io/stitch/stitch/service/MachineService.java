@@ -40,9 +40,9 @@ public class MachineService {
         this.primarySequenceService = primarySequenceService;
     }
 
-    public List<MachineDTO> findAll() {
+    public List<AppMachineDTO> findAll() {
         final List<Machine> machines = machineRepository.findAll(Sort.by("id"));
-        return machines.stream().map(machine -> mapToDTO(machine, new MachineDTO())).toList();
+        return machines.stream().map(machine -> mapToAppDTO(machine, new AppMachineDTO())).toList();
     }
 
     public MachineDTO get(final Long id) {
