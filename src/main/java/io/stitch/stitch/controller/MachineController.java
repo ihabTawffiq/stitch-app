@@ -32,6 +32,10 @@ public class MachineController {
     public ResponseEntity<List<AppMachineDTO>> getMachineByTag(@RequestParam(name = "tagId") Long[] ids) {
         return ResponseEntity.ok(machineService.getMachinesByTag(ids));
     }
+    @GetMapping("/app/by-category-id")
+    public ResponseEntity<List<AppMachineDTO>> getMachineByCategory(@RequestParam(name = "categoryId") Long id) {
+        return ResponseEntity.ok(machineService.getMachinesByCategory(id));
+    }
 
     @GetMapping("/{id}")
     public ResponseEntity<MachineDTO> getMachine(@PathVariable(name = "id") final Long id) {

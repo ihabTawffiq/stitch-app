@@ -20,10 +20,7 @@ import io.stitch.stitch.util.NotFoundException;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 
 
 @Service
@@ -80,6 +77,19 @@ public class MachineService {
             machineDTOList.add(mapToAppDTO(machine, new AppMachineDTO()));
         }
         return machineDTOList;
+    }
+    public List<AppMachineDTO> getMachinesByCategory(Long categoryId) {
+        Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+        if(categoryOptional.isPresent()){
+            Category category = categoryOptional.get();
+            List<Machine> machineList = machineRepository.findAllByCategory(category);
+            List<AppMachineDTO> machineDTOList = new ArrayList<>();
+            for (Machine machine : machineList) {
+                machineDTOList.add(mapToAppDTO(machine, new AppMachineDTO()));
+            }
+            return machineDTOList;
+        }
+        return null;
     }
 
     private MachineDTO mapToDTO(final Machine machine, final MachineDTO machineDTO) {
