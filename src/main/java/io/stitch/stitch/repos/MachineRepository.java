@@ -18,5 +18,9 @@ public interface MachineRepository extends MongoRepository<Machine, Long> {
 
     List<Machine> findAllByTags(Tag tag);
 
+
     List<Machine> findAllByCategory(Category categoryId);
+
+    List<Machine> findAllByBrand(Brand brandId);
+
 }

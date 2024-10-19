@@ -91,6 +91,20 @@ public class MachineService {
         }
         return null;
     }
+    public List<AppMachineDTO> getMachinesByBrand(Long brandId) {
+        Optional<Brand> brandOptional = brandRepository.findById(brandId);
+        if(brandOptional.isPresent()){
+            Brand brand = brandOptional.get();
+            List<Machine> machineList = machineRepository.findAllByBrand(brand);
+            List<AppMachineDTO> machineDTOList = new ArrayList<>();
+            for (Machine machine : machineList) {
+                machineDTOList.add(mapToAppDTO(machine, new AppMachineDTO()));
+            }
+            return machineDTOList;
+        }
+        return null;
+
+    }
 
     private MachineDTO mapToDTO(final Machine machine, final MachineDTO machineDTO) {
         machineDTO.setId(machine.getId());
@@ -144,5 +158,7 @@ public class MachineService {
         iterable.forEach(item -> list.add(item));
         return list;
     }
+
+
 
 }
