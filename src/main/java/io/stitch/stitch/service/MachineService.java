@@ -80,6 +80,7 @@ public class MachineService {
     }
     public List<AppMachineDTO> getMachinesByCategory(Long categoryId) {
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
+
         if(categoryOptional.isPresent()){
             Category category = categoryOptional.get();
             List<Machine> machineList = machineRepository.findAllByCategory(category);
