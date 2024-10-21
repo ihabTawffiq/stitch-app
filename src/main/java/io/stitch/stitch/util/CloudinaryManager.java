@@ -24,7 +24,6 @@ public class CloudinaryManager {
 
     public String uploadImageOnCloud(MultipartFile imageFile) throws IOException {
         var map = cloudinary.uploader().upload(imageFile.getBytes(), ObjectUtils.asMap("public_id", UUID.randomUUID().toString()));
-
         if (Objects.nonNull(map)) {
             String imageURL = map.get("url").toString();
             String publicId = map.get("public_id").toString();
@@ -32,7 +31,6 @@ public class CloudinaryManager {
             image.setUrl(imageURL);
             image.setId(publicId);
             imageRepository.save(image);
-
             return imageURL;
         }
         return "failure";
