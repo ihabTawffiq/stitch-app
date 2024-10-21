@@ -1,15 +1,20 @@
 package io.stitch.stitch.service;
 
+import io.stitch.stitch.dto.BannerDTO;
+import io.stitch.stitch.dto.BrandDTO;
 import io.stitch.stitch.dto.CreateBannerRequest;
 import io.stitch.stitch.entity.Banner;
+import io.stitch.stitch.entity.Brand;
 import io.stitch.stitch.repos.BannerRepository;
 import io.stitch.stitch.repos.BrandRepository;
 import io.stitch.stitch.repos.TagRepository;
 import io.stitch.stitch.util.CloudinaryManager;
 import io.stitch.stitch.util.NotFoundException;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Objects;
 
 @Service
@@ -27,6 +32,24 @@ public class BannerService {
         this.primarySequenceService = primarySequenceService;
         this.tagRepository = tagRepository;
         this.brandRepository = brandRepository;
+    }
+
+    public List<BannerDTO> findAll() {
+        final List<Banner> banners = bannerRepository.findAll(Sort.by("id"));
+        return banners.stream().map(banner -> (BannerDTO) mapToDTO(banner, new BannerDTO())).toList();
+    }
+
+    private Object mapToDTO(Banner banner, BannerDTO bannerDTO) {
+        bannerDTO.setImageURL(banner.getImageURL());
+        bannerDTO.setDescription(banner.getDescription());
+        bannerDTO.setBannerOrder(banner.getBannerOrder());
+        return bannerDTO;
+    }
+    private Banner mapToEntity(final BannerDTO bannerDTO, final Banner banner) {
+        banner.setImageURL(bannerDTO.getImageURL());
+        banner.setDescription(bannerDTO.getDescription());
+        banner.setBannerOrder(bannerDTO.getBannerOrder());
+        return banner;
     }
 
     public Long createNewBanner(final CreateBannerRequest createBannerRequest) throws IOException {
