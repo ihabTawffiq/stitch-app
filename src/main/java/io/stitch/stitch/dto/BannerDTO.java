@@ -7,18 +7,17 @@ import lombok.Setter;
 @Setter
 public class BannerDTO {
 
-
         private Long id;
 
-        @NotNull
         @Size(max = 1080)
         private String imageURL;
 
-
         private int bannerOrder;
 
-        @NotNull
         @Size(max = 255)
         private String description;
+
+        private TagDTO tagDTO;
+        private BrandDTO brandDTO;
 
 }

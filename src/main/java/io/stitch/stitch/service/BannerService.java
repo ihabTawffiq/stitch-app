@@ -3,8 +3,11 @@ package io.stitch.stitch.service;
 import io.stitch.stitch.dto.BannerDTO;
 import io.stitch.stitch.dto.BrandDTO;
 import io.stitch.stitch.dto.CreateBannerRequest;
+import io.stitch.stitch.dto.TagDTO;
 import io.stitch.stitch.entity.Banner;
 import io.stitch.stitch.entity.Brand;
+import io.stitch.stitch.mappers.BrandMapper;
+import io.stitch.stitch.mappers.TagMapper;
 import io.stitch.stitch.repos.BannerRepository;
 import io.stitch.stitch.repos.BrandRepository;
 import io.stitch.stitch.repos.TagRepository;
@@ -43,14 +46,19 @@ public class BannerService {
         bannerDTO.setImageURL(banner.getImageURL());
         bannerDTO.setDescription(banner.getDescription());
         bannerDTO.setBannerOrder(banner.getBannerOrder());
+        if (Objects.nonNull(banner.getTag())){
+            TagDTO tagDTO = new TagDTO();
+            TagMapper.mapToAppDTO(banner.getTag(),tagDTO);
+            bannerDTO.setTagDTO(tagDTO);
+        }
+        if (Objects.nonNull(banner.getBrand())){
+            BrandDTO brandDTO = new BrandDTO();
+            BrandMapper.mapToAppDTO(banner.getBrand(),brandDTO);
+            bannerDTO.setBrandDTO(brandDTO);
+        }
         return bannerDTO;
     }
-    private Banner mapToEntity(final BannerDTO bannerDTO, final Banner banner) {
-        banner.setImageURL(bannerDTO.getImageURL());
-        banner.setDescription(bannerDTO.getDescription());
-        banner.setBannerOrder(bannerDTO.getBannerOrder());
-        return banner;
-    }
+
 
     public Long createNewBanner(final CreateBannerRequest createBannerRequest) throws IOException {
         Banner banner = new Banner();
