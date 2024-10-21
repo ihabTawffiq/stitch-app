@@ -1,15 +1,16 @@
 package io.stitch.stitch.service;
 
+import io.stitch.stitch.dto.BrandDTO;
 import io.stitch.stitch.entity.Brand;
 import io.stitch.stitch.entity.Machine;
-import io.stitch.stitch.dto.BrandDTO;
 import io.stitch.stitch.repos.BrandRepository;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.util.NotFoundException;
 import io.stitch.stitch.util.ReferencedWarning;
-import java.util.List;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -19,8 +20,7 @@ public class BrandService {
     private final MachineRepository machineRepository;
     private final PrimarySequenceService primarySequenceService;
 
-    public BrandService(final BrandRepository brandRepository,
-                        final MachineRepository machineRepository, PrimarySequenceService primarySequenceService) {
+    public BrandService(final BrandRepository brandRepository, final MachineRepository machineRepository, PrimarySequenceService primarySequenceService) {
         this.brandRepository = brandRepository;
         this.machineRepository = machineRepository;
         this.primarySequenceService = primarySequenceService;
@@ -28,15 +28,11 @@ public class BrandService {
 
     public List<BrandDTO> findAll() {
         final List<Brand> brands = brandRepository.findAll(Sort.by("id"));
-        return brands.stream()
-                .map(brand -> mapToDTO(brand, new BrandDTO()))
-                .toList();
+        return brands.stream().map(brand -> mapToDTO(brand, new BrandDTO())).toList();
     }
 
     public BrandDTO get(final Long id) {
-        return brandRepository.findById(id)
-                .map(brand -> mapToDTO(brand, new BrandDTO()))
-                .orElseThrow(NotFoundException::new);
+        return brandRepository.findById(id).map(brand -> mapToDTO(brand, new BrandDTO())).orElseThrow(NotFoundException::new);
     }
 
     public Long create(final BrandDTO brandDTO) {
@@ -47,8 +43,7 @@ public class BrandService {
     }
 
     public void update(final Long id, final BrandDTO brandDTO) {
-        final Brand brand = brandRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+        final Brand brand = brandRepository.findById(id).orElseThrow(NotFoundException::new);
         mapToEntity(brandDTO, brand);
         brandRepository.save(brand);
     }
@@ -74,8 +69,7 @@ public class BrandService {
 
     public ReferencedWarning getReferencedWarning(final Long id) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final Brand brand = brandRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+        final Brand brand = brandRepository.findById(id).orElseThrow(NotFoundException::new);
         final Machine brandMachine = machineRepository.findFirstByBrand(brand);
         if (brandMachine != null) {
             referencedWarning.setKey("brand.machine.brand.referenced");
