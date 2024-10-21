@@ -5,7 +5,6 @@ import io.stitch.stitch.dto.BrandDTO;
 import io.stitch.stitch.dto.CreateBannerRequest;
 import io.stitch.stitch.dto.TagDTO;
 import io.stitch.stitch.entity.Banner;
-import io.stitch.stitch.entity.Brand;
 import io.stitch.stitch.mappers.BrandMapper;
 import io.stitch.stitch.mappers.TagMapper;
 import io.stitch.stitch.repos.BannerRepository;
@@ -46,14 +45,14 @@ public class BannerService {
         bannerDTO.setImageURL(banner.getImageURL());
         bannerDTO.setDescription(banner.getDescription());
         bannerDTO.setBannerOrder(banner.getBannerOrder());
-        if (Objects.nonNull(banner.getTag())){
+        if (Objects.nonNull(banner.getTag())) {
             TagDTO tagDTO = new TagDTO();
-            TagMapper.mapToAppDTO(banner.getTag(),tagDTO);
+            TagMapper.mapToAppDTO(banner.getTag(), tagDTO);
             bannerDTO.setTagDTO(tagDTO);
         }
-        if (Objects.nonNull(banner.getBrand())){
+        if (Objects.nonNull(banner.getBrand())) {
             BrandDTO brandDTO = new BrandDTO();
-            BrandMapper.mapToAppDTO(banner.getBrand(),brandDTO);
+            BrandMapper.mapToAppDTO(banner.getBrand(), brandDTO);
             bannerDTO.setBrandDTO(brandDTO);
         }
         return bannerDTO;
