@@ -1,6 +1,6 @@
 package io.stitch.stitch.controller;
 
-import io.stitch.stitch.dto.BannerDTO;
+import io.stitch.stitch.dto.CreateBannerRequest;
 import io.stitch.stitch.service.BannerService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
@@ -19,12 +19,9 @@ public class BannerController {
         this.bannerService = bannerService;
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Long> updateBanner(@PathVariable (name = "id") Long id,
-                                             @RequestBody @Valid final BannerDTO bannerDTO) throws IOException {
-        bannerService.update(id,bannerDTO);
-
-        return ResponseEntity.ok(bannerDTO.getId());
+    @PostMapping()
+    public ResponseEntity<Long> createBanner(@RequestBody @Valid final CreateBannerRequest createBannerRequest) throws IOException {
+        return ResponseEntity.ok(bannerService.createNewBanner(createBannerRequest));
     }
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
