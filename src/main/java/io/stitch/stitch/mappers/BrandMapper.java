@@ -7,6 +7,8 @@ public class BrandMapper {
     public static BrandDTO mapToAppDTO(final Brand brand, final BrandDTO brandDTO) {
         brandDTO.setId(brand.getId());
         brandDTO.setName(brand.getName());
+        brandDTO.setDescription(brand.getDescription());
+        brandDTO.setLogoURL(brand.getLogoURL());
         return brandDTO;
     }
 

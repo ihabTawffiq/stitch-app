@@ -42,6 +42,7 @@ public class BannerService {
     }
 
     private Object mapToDTO(Banner banner, BannerDTO bannerDTO) {
+        bannerDTO.setId(banner.getId());
         bannerDTO.setImageURL(banner.getImageURL());
         bannerDTO.setDescription(banner.getDescription());
         bannerDTO.setBannerOrder(banner.getBannerOrder());
@@ -76,13 +77,11 @@ public class BannerService {
         banner.setDescription(createBannerRequest.getDescription());
         banner.setBannerOrder(createBannerRequest.getBannerOrder());
         banner.setImageURL(createBannerRequest.getImageURL());
-        if (Objects.nonNull(createBannerRequest.getId())) {
-            banner.setTag(tagRepository.findById(createBannerRequest.getId()).orElseThrow(NotFoundException::new));
+        if (Objects.nonNull(createBannerRequest.getTagId())) {
+            banner.setTag(tagRepository.findById(createBannerRequest.getTagId()).orElseThrow(NotFoundException::new));
         }
         if (Objects.nonNull(createBannerRequest.getBrandId())) {
             banner.setBrand(brandRepository.findById(createBannerRequest.getBrandId()).orElseThrow(NotFoundException::new));
-        } else {
-            banner.setBrand(null);
         }
 
     }
