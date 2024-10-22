@@ -37,7 +37,7 @@ public class BannerService {
     }
 
     public List<BannerDTO> findAll() {
-        final List<Banner> banners = bannerRepository.findAll(Sort.by("id"));
+        final List<Banner> banners = bannerRepository.findAll(Sort.by("bannerOrder"));
         return banners.stream().map(banner -> (BannerDTO) mapToDTO(banner, new BannerDTO())).toList();
     }
 
@@ -60,7 +60,7 @@ public class BannerService {
     }
 
 
-    public Long createNewBanner(final CreateBannerRequest createBannerRequest) throws IOException {
+    public Long createNewBanner(final CreateBannerRequest createBannerRequest) {
         Banner banner = new Banner();
         mapRequestToEntity(createBannerRequest, banner);
         return bannerRepository.save(banner).getId();

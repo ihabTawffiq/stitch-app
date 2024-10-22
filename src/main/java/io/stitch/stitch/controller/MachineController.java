@@ -24,24 +24,31 @@ public class MachineController {
     }
 
     @GetMapping
-    public ResponseEntity<List<AppMachineDTO>> getAllMachines() {
-        return ResponseEntity.ok(machineService.findAll());
+    public ResponseEntity<List<AppMachineDTO>> getAllMachines(@RequestParam(defaultValue = "0") final Integer offset,
+                                                              @RequestParam(defaultValue = "3") final Integer limit) {
+        return ResponseEntity.ok(machineService.findAll(offset,limit));
     }
 
     @GetMapping("/app/by-tag-id")
-    public ResponseEntity<List<AppMachineDTO>> getMachineByTag(@RequestParam(name = "tagId") Long[] ids) {
-        return ResponseEntity.ok(machineService.getMachinesByTag(ids));
+    public ResponseEntity<List<AppMachineDTO>> getMachineByTag(@RequestParam(name = "tagId") Long[] ids,
+                                                               @RequestParam(defaultValue = "0") final Integer offset,
+                                                               @RequestParam(defaultValue = "3") final Integer limit) {
+        return ResponseEntity.ok(machineService.getMachinesByTag(ids,offset,limit));
     }
 
 
     @GetMapping("/app/by-category-id")
-    public ResponseEntity<List<AppMachineDTO>> getMachineByCategory(@RequestParam(name = "categoryId") Long id) {
-        return ResponseEntity.ok(machineService.getMachinesByCategory(id));
+    public ResponseEntity<List<AppMachineDTO>> getMachineByCategory(@RequestParam(name = "categoryId") Long id,
+                                                                    @RequestParam(defaultValue = "0") final Integer offset,
+                                                                    @RequestParam(defaultValue = "3") final Integer limit) {
+        return ResponseEntity.ok(machineService.getMachinesByCategory(id,offset,limit));
     }
 
     @GetMapping("/app/by-brand-id")
-    public ResponseEntity<List<AppMachineDTO>> getMachineByBrand(@RequestParam(name = "brandId") Long id) {
-        return ResponseEntity.ok(machineService.getMachinesByBrand(id));
+    public ResponseEntity<List<AppMachineDTO>> getMachineByBrand(@RequestParam(name = "brandId") Long id,
+                                                                 @RequestParam(defaultValue = "0") final Integer offset,
+                                                                 @RequestParam(defaultValue = "3") final Integer limit) {
+        return ResponseEntity.ok(machineService.getMachinesByBrand(id,offset,limit));
     }
 
 
