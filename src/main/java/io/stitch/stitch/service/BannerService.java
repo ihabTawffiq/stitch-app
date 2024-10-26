@@ -37,11 +37,12 @@ public class BannerService {
     }
 
     public List<BannerDTO> findAll() {
-        final List<Banner> banners = bannerRepository.findAll(Sort.by("id"));
+        final List<Banner> banners = bannerRepository.findAll(Sort.by("bannerOrder"));
         return banners.stream().map(banner -> (BannerDTO) mapToDTO(banner, new BannerDTO())).toList();
     }
 
     private Object mapToDTO(Banner banner, BannerDTO bannerDTO) {
+        bannerDTO.setId(banner.getId());
         bannerDTO.setImageURL(banner.getImageURL());
         bannerDTO.setDescription(banner.getDescription());
         bannerDTO.setBannerOrder(banner.getBannerOrder());
@@ -59,7 +60,7 @@ public class BannerService {
     }
 
 
-    public Long createNewBanner(final CreateBannerRequest createBannerRequest) throws IOException {
+    public Long createNewBanner(final CreateBannerRequest createBannerRequest) {
         Banner banner = new Banner();
         mapRequestToEntity(createBannerRequest, banner);
         return bannerRepository.save(banner).getId();
@@ -76,13 +77,11 @@ public class BannerService {
         banner.setDescription(createBannerRequest.getDescription());
         banner.setBannerOrder(createBannerRequest.getBannerOrder());
         banner.setImageURL(createBannerRequest.getImageURL());
-        if (Objects.nonNull(createBannerRequest.getId())) {
-            banner.setTag(tagRepository.findById(createBannerRequest.getId()).orElseThrow(NotFoundException::new));
+        if (Objects.nonNull(createBannerRequest.getTagId())) {
+            banner.setTag(tagRepository.findById(createBannerRequest.getTagId()).orElseThrow(NotFoundException::new));
         }
         if (Objects.nonNull(createBannerRequest.getBrandId())) {
             banner.setBrand(brandRepository.findById(createBannerRequest.getBrandId()).orElseThrow(NotFoundException::new));
-        } else {
-            banner.setBrand(null);
         }
 
     }
