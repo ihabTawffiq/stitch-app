@@ -19,7 +19,6 @@ import io.stitch.stitch.repos.TagRepository;
 import io.stitch.stitch.util.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
@@ -42,12 +41,21 @@ public class MachineService {
         this.primarySequenceService = primarySequenceService;
     }
 
-    public List<AppMachineDTO> findAll(final Integer offset,final Integer limit) {
-        List<Machine> machineList = new ArrayList<>();
-        if(offset==-1){
-            machineList= machineRepository.findAll();
-        }else {
-            machineList =  machineRepository.findAll(PageRequest.of(offset,limit)).getContent();
+    static Map<String, Object> convertToResponse(final Page<Machine> pagePersons) {
+        Map<String, Object> response = new HashMap<>();
+        response.put("rice-productions", pagePersons.getContent());
+        response.put("current-page", pagePersons.getNumber());
+        response.put("total-items", pagePersons.getTotalElements());
+        response.put("total-pages", pagePersons.getTotalPages());
+        return response;
+    }
+
+    public List<AppMachineDTO> findAll(final Integer offset, final Integer limit) {
+        List<Machine> machineList;
+        if (offset == -1) {
+            machineList = machineRepository.findAll();
+        } else {
+            machineList = machineRepository.findAll(PageRequest.of(offset, limit)).getContent();
         }
         return machineList.stream().map(machine -> mapToAppDTO(machine, new AppMachineDTO())).toList();
     }
@@ -73,33 +81,33 @@ public class MachineService {
         machineRepository.deleteById(id);
     }
 
-    public List<AppMachineDTO> getMachinesByTag(final Long[] tagIds,final Integer offset,final Integer limit) {
-        List<Machine> machineList = new ArrayList<>();
+    public List<AppMachineDTO> getMachinesByTag(final Long[] tagIds, final Integer offset, final Integer limit) {
+        List<Machine> machineList;
         List<Tag> tagList = tagRepository.findAllByIdIn(Arrays.stream(tagIds).toList());
         List<AppMachineDTO> machineDTOList = new ArrayList<>();
-        if(offset==-1){
+        if (offset == -1) {
             machineList = machineRepository.findAllByTagsIn(tagList);
 
-        }else {
-            machineList = machineRepository.findAllByTagsIn(tagList , PageRequest.of(offset,limit)).getContent();
+        } else {
+            machineList = machineRepository.findAllByTagsIn(tagList, PageRequest.of(offset, limit)).getContent();
         }
         for (Machine machine : machineList) {
             machineDTOList.add(mapToAppDTO(machine, new AppMachineDTO()));
         }
         return machineDTOList;
     }
-    public List<AppMachineDTO> getMachinesByCategory(final Long categoryId,final Integer offset, final Integer limit) {
 
-    public List<AppMachineDTO> getMachinesByCategory(Long categoryId) {
+    public List<AppMachineDTO> getMachinesByCategory(final Long categoryId, final Integer offset, final Integer limit) {
+
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
         if (categoryOptional.isPresent()) {
             Category category = categoryOptional.get();
 
-            List<Machine> machineList = new ArrayList<>();
-            if(offset==-1){
+            List<Machine> machineList;
+            if (offset == -1) {
                 machineList = machineRepository.findAllByCategory(category);
-            }else{
-                machineList = machineRepository.findAllByCategory(category,PageRequest.of(offset,limit)).getContent();
+            } else {
+                machineList = machineRepository.findAllByCategory(category, PageRequest.of(offset, limit)).getContent();
             }
             List<AppMachineDTO> machineDTOList = new ArrayList<>();
             for (Machine machine : machineList) {
@@ -110,16 +118,15 @@ public class MachineService {
         return null;
     }
 
-    public List<AppMachineDTO> getMachinesByBrand(Long brandId) {
-    public List<AppMachineDTO> getMachinesByBrand(final Long brandId,final Integer offset,final Integer limit) {
+    public List<AppMachineDTO> getMachinesByBrand(final Long brandId, final Integer offset, final Integer limit) {
         Optional<Brand> brandOptional = brandRepository.findById(brandId);
         if (brandOptional.isPresent()) {
             Brand brand = brandOptional.get();
-            List<Machine> machineList = new ArrayList<>();
-            if(offset==-1){
+            List<Machine> machineList;
+            if (offset == -1) {
                 machineList = machineRepository.findAllByBrand(brand);
-            }else {
-                machineList = machineRepository.findAllByBrand(brand,PageRequest.of(offset,limit)).getContent();
+            } else {
+                machineList = machineRepository.findAllByBrand(brand, PageRequest.of(offset, limit)).getContent();
             }
             List<AppMachineDTO> machineDTOList = new ArrayList<>();
             for (Machine machine : machineList) {
@@ -152,8 +159,7 @@ public class MachineService {
         } else {
             categoryList = categoryRepository.findAll();
         }
-
-
+        
         List<Machine> machineList = machineRepository.findAllByBrandInAndCategoryInAndTagsIn(brandList, categoryList, tagList);
         List<AppMachineDTO> machineDTOList = new ArrayList<>();
         for (Machine machine : machineList) {
@@ -161,7 +167,6 @@ public class MachineService {
         }
         return machineDTOList;
     }
-
 
     private MachineDTO mapToDTO(final Machine machine, final MachineDTO machineDTO) {
         machineDTO.setId(machine.getId());
@@ -172,12 +177,12 @@ public class MachineService {
         machineDTO.setFinalPrice(machine.getFinalPrice());
         machineDTO.setInitialPrice(machine.getInitialPrice());
         machineDTO.setBrand(machine.getBrand() == null ? null : machine.getBrand().getId());
-        machineDTO.setTags(machine.getTags().stream().map(tag -> tag.getId()).toList());
+        machineDTO.setTags(machine.getTags().stream().map(Tag::getId).toList());
         machineDTO.setCategory(machine.getCategory() == null ? null : machine.getCategory().getId());
         return machineDTO;
     }
 
-    private Machine mapToEntity(final MachineDTO machineDTO, final Machine machine) {
+    private void mapToEntity(final MachineDTO machineDTO, final Machine machine) {
         machine.setModel(machineDTO.getModel());
         machine.setDescription(machineDTO.getDescription());
         machine.setStock(machineDTO.getStock());
@@ -213,15 +218,6 @@ public class MachineService {
         final List<T> list = new ArrayList<>();
         iterable.forEach(list::add);
         return list;
-    }
-
-    static Map<String, Object> convertToResponse(final Page<Machine> pagePersons) {
-        Map<String, Object> response = new HashMap<>();
-        response.put("rice-productions", pagePersons.getContent());
-        response.put("current-page", pagePersons.getNumber());
-        response.put("total-items", pagePersons.getTotalElements());
-        response.put("total-pages", pagePersons.getTotalPages());
-        return response;
     }
 
 
