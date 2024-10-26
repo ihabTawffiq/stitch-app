@@ -105,6 +105,39 @@ public class MachineService {
         return null;
 
     }
+    public List<AppMachineDTO> filterMachines( List<Long> tagIds,  List<Long> brandIds,  List<Long> categoryIds){
+    if(tagIds == null || tagIds.isEmpty()) {
+        List<Tag> tags = tagRepository.findAll();
+        List<Long> ids = new ArrayList<>();
+        for (Tag tag : tags) {
+            ids.add(tag.getId());
+        }
+        tagIds = ids;
+    }
+    if(brandIds == null || brandIds.isEmpty()) {
+        List<Brand> brandList = brandRepository.findAll();
+        List<Long> ids = new ArrayList<>();
+        for (Brand brand : brandList) {
+            ids.add(brand.getId());
+        }
+        brandIds = ids;
+    }
+    if(categoryIds == null || categoryIds.isEmpty()) {
+        List<Category> categoryList = categoryRepository.findAll();
+        List<Long> ids = new ArrayList<>();
+        for (Category category : categoryList) {
+            ids.add(category.getId());
+        }
+        categoryIds = ids;
+    }
+    List<Machine> machineList = machineRepository.findAllByBrandIdInAndCategoryIdInAndTagsIdIn(brandIds,categoryIds,tagIds);
+    List<AppMachineDTO> machineDTOList = new ArrayList<>();
+    for (Machine machine : machineList) {
+        machineDTOList.add(mapToAppDTO(machine, new AppMachineDTO()));
+    }
+        return machineDTOList;
+    }
+
 
     private MachineDTO mapToDTO(final Machine machine, final MachineDTO machineDTO) {
         machineDTO.setId(machine.getId());
@@ -158,7 +191,5 @@ public class MachineService {
         iterable.forEach(item -> list.add(item));
         return list;
     }
-
-
 
 }

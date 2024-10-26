@@ -71,5 +71,9 @@ public class MachineController {
         machineService.delete(id);
         return ResponseEntity.noContent().build();
     }
+    @GetMapping("/app/filter")
+    public ResponseEntity<List<AppMachineDTO>> filterMachine(@RequestParam(required = false) List<Long> tagIds,@RequestParam(required = false) List<Long> categoryIds,@RequestParam(required = false) List<Long> brandIds) {
+       return ResponseEntity.ok( machineService.filterMachines(tagIds,brandIds,categoryIds));
+    }
 
 }
