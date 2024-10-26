@@ -12,13 +12,12 @@ public interface MachineRepository extends MongoRepository<Machine, Long> {
 
     Machine findFirstByBrand(Brand brand);
 
-    Machine findFirstByTags(Tag tag);
 
     Machine findFirstByCategory(Category category);
 
     List<Machine> findAllByTags(Tag tag);
 
-    List<Machine> findAllByBrandIdInAndCategoryIdInAndTagsIdIn(List<Long> brandIds, List<Long> categoryIds, List<Long> tagIds);
+    List<Machine> findAllByBrandInAndCategoryInAndTagsIn(List<Brand> brands, List<Category> categories, List<Tag> tags);
 
     List<Machine> findAllByCategory(Category categoryId);
 

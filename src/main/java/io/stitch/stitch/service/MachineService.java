@@ -78,9 +78,10 @@ public class MachineService {
         }
         return machineDTOList;
     }
+
     public List<AppMachineDTO> getMachinesByCategory(Long categoryId) {
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
-        if(categoryOptional.isPresent()){
+        if (categoryOptional.isPresent()) {
             Category category = categoryOptional.get();
             List<Machine> machineList = machineRepository.findAllByCategory(category);
             List<AppMachineDTO> machineDTOList = new ArrayList<>();
@@ -91,9 +92,10 @@ public class MachineService {
         }
         return null;
     }
+
     public List<AppMachineDTO> getMachinesByBrand(Long brandId) {
         Optional<Brand> brandOptional = brandRepository.findById(brandId);
-        if(brandOptional.isPresent()){
+        if (brandOptional.isPresent()) {
             Brand brand = brandOptional.get();
             List<Machine> machineList = machineRepository.findAllByBrand(brand);
             List<AppMachineDTO> machineDTOList = new ArrayList<>();
@@ -105,36 +107,35 @@ public class MachineService {
         return null;
 
     }
-    public List<AppMachineDTO> filterMachines( List<Long> tagIds,  List<Long> brandIds,  List<Long> categoryIds){
-    if(tagIds == null || tagIds.isEmpty()) {
-        List<Tag> tags = tagRepository.findAll();
-        List<Long> ids = new ArrayList<>();
-        for (Tag tag : tags) {
-            ids.add(tag.getId());
+
+    public List<AppMachineDTO> filterMachines(List<Long> tagIds, List<Long> brandIds, List<Long> categoryIds) {
+        List<Tag> tagList;
+        List<Brand> brandList;
+        List<Category> categoryList;
+        if (Objects.nonNull(tagIds) && !tagIds.isEmpty()) {
+            tagList = tagRepository.findAllById(tagIds);
+        } else {
+            tagList = tagRepository.findAll();
         }
-        tagIds = ids;
-    }
-    if(brandIds == null || brandIds.isEmpty()) {
-        List<Brand> brandList = brandRepository.findAll();
-        List<Long> ids = new ArrayList<>();
-        for (Brand brand : brandList) {
-            ids.add(brand.getId());
+
+        if (Objects.nonNull(brandIds) && !brandIds.isEmpty()) {
+            brandList = brandRepository.findAllById(brandIds);
+        } else {
+            brandList = brandRepository.findAll();
         }
-        brandIds = ids;
-    }
-    if(categoryIds == null || categoryIds.isEmpty()) {
-        List<Category> categoryList = categoryRepository.findAll();
-        List<Long> ids = new ArrayList<>();
-        for (Category category : categoryList) {
-            ids.add(category.getId());
+
+        if (Objects.nonNull(categoryIds) && !categoryIds.isEmpty()) {
+            categoryList = categoryRepository.findAllById(categoryIds);
+        } else {
+            categoryList = categoryRepository.findAll();
         }
-        categoryIds = ids;
-    }
-    List<Machine> machineList = machineRepository.findAllByBrandIdInAndCategoryIdInAndTagsIdIn(brandIds,categoryIds,tagIds);
-    List<AppMachineDTO> machineDTOList = new ArrayList<>();
-    for (Machine machine : machineList) {
-        machineDTOList.add(mapToAppDTO(machine, new AppMachineDTO()));
-    }
+
+
+        List<Machine> machineList = machineRepository.findAllByBrandInAndCategoryInAndTagsIn(brandList, categoryList, tagList);
+        List<AppMachineDTO> machineDTOList = new ArrayList<>();
+        for (Machine machine : machineList) {
+            machineDTOList.add(mapToAppDTO(machine, new AppMachineDTO()));
+        }
         return machineDTOList;
     }
 
@@ -148,12 +149,12 @@ public class MachineService {
         machineDTO.setFinalPrice(machine.getFinalPrice());
         machineDTO.setInitialPrice(machine.getInitialPrice());
         machineDTO.setBrand(machine.getBrand() == null ? null : machine.getBrand().getId());
-        machineDTO.setTags(machine.getTags().stream().map(tag -> tag.getId()).toList());
+        machineDTO.setTags(machine.getTags().stream().map(Tag::getId).toList());
         machineDTO.setCategory(machine.getCategory() == null ? null : machine.getCategory().getId());
         return machineDTO;
     }
 
-    private Machine mapToEntity(final MachineDTO machineDTO, final Machine machine) {
+    private void mapToEntity(final MachineDTO machineDTO, final Machine machine) {
         machine.setModel(machineDTO.getModel());
         machine.setDescription(machineDTO.getDescription());
         machine.setStock(machineDTO.getStock());
@@ -169,7 +170,6 @@ public class MachineService {
         machine.setTags(new HashSet<>(tags));
         final Category category = machineDTO.getCategory() == null ? null : categoryRepository.findById(machineDTO.getCategory()).orElseThrow(() -> new NotFoundException("category not found"));
         machine.setCategory(category);
-        return machine;
     }
 
     private AppMachineDTO mapToAppDTO(final Machine machine, final AppMachineDTO machineDTO) {
@@ -180,15 +180,15 @@ public class MachineService {
         machineDTO.setMainImageUrl(machine.getMainImageUrl());
         machineDTO.setFinalPrice(machine.getFinalPrice());
         machineDTO.setInitialPrice(machine.getInitialPrice());
-        machineDTO.setBrand(machine.getBrand() == null ? null : BrandMapper.mapToAppDTO(machine.getBrand(),new BrandDTO()));
-        machineDTO.setTags(machine.getTags().stream().map(tag -> TagMapper.mapToAppDTO(tag,new TagDTO())).toList());
-        machineDTO.setCategory(machine.getCategory() == null ? null : CategoryMapper.mapToAppDTO(machine.getCategory(),new CategoryDTO()));
+        machineDTO.setBrand(machine.getBrand() == null ? null : BrandMapper.mapToAppDTO(machine.getBrand(), new BrandDTO()));
+        machineDTO.setTags(machine.getTags().stream().map(tag -> TagMapper.mapToAppDTO(tag, new TagDTO())).toList());
+        machineDTO.setCategory(machine.getCategory() == null ? null : CategoryMapper.mapToAppDTO(machine.getCategory(), new CategoryDTO()));
         return machineDTO;
     }
 
     private <T> List<T> iterableToList(final Iterable<T> iterable) {
-        final List<T> list = new ArrayList<T>();
-        iterable.forEach(item -> list.add(item));
+        final List<T> list = new ArrayList<>();
+        iterable.forEach(list::add);
         return list;
     }
 
