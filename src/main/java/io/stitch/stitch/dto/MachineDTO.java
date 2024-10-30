@@ -34,6 +34,7 @@ public class MachineDTO {
     private Long brand;
 
     private List<Long> tags;
+    private List<Long> feedbacks;
 
     @NotNull
     private Long category;
