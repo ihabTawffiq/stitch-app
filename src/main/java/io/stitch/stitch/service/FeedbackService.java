@@ -1,23 +1,35 @@
 package io.stitch.stitch.service;
-import io.stitch.stitch.dto.FeedbackDTO;
+
+import io.stitch.stitch.dto.requets.SendFeedbackRequest;
 import io.stitch.stitch.entity.Feedback;
 import io.stitch.stitch.repos.FeedbackRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import io.stitch.stitch.repos.MachineRepository;
+import io.stitch.stitch.util.NotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FeedbackService {
 
-    @Autowired
-    private FeedbackRepository feedbackRepository;
+    private final FeedbackRepository feedbackRepository;
+    private final MachineRepository machineRepository;
+    private final PrimarySequenceService primarySequenceService;
 
-    public Feedback createFeedback(FeedbackDTO feedbackDTO) {
+
+    public FeedbackService(FeedbackRepository feedbackRepository, MachineRepository machineRepository, PrimarySequenceService primarySequenceService) {
+        this.feedbackRepository = feedbackRepository;
+        this.machineRepository = machineRepository;
+        this.primarySequenceService = primarySequenceService;
+    }
+
+    public Long createFeedback(SendFeedbackRequest sendFeedbackRequest) {
         Feedback feedback = new Feedback();
-        feedback.setMessage(feedbackDTO.getMessage());
-        feedback.setUsername(feedbackDTO.getUsername());
-        feedback.setRate(feedbackDTO.getRate());
-        feedback.setMachineId(feedbackDTO.getMachineId());
-        feedback.setApproved(feedbackDTO.getApproved());
-        return feedbackRepository.save(feedback);
+        feedback.setId(primarySequenceService.getNextValue());
+        feedback.setMessage(sendFeedbackRequest.getMessage());
+        feedback.setUsername(sendFeedbackRequest.getUsername());
+        feedback.setRate(sendFeedbackRequest.getRate());
+        feedback.setMachine(machineRepository.findById(sendFeedbackRequest.getMachineId()).orElseThrow(NotFoundException::new));
+        feedback.setApproved(false);
+        Feedback savedFeedback = feedbackRepository.save(feedback);
+        return savedFeedback.getId();
     }
 }
