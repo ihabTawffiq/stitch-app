@@ -26,13 +26,11 @@ import java.util.*;
 
 @Service
 public class MachineService {
-
     private final MachineRepository machineRepository;
     private final BrandRepository brandRepository;
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
     private final PrimarySequenceService primarySequenceService;
-
     public MachineService(final MachineRepository machineRepository, final BrandRepository brandRepository, final TagRepository tagRepository, final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService) {
         this.machineRepository = machineRepository;
         this.brandRepository = brandRepository;
