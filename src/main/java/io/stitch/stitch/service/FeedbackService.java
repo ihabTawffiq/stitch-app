@@ -7,6 +7,8 @@ import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.util.NotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FeedbackService {
 
@@ -31,5 +33,16 @@ public class FeedbackService {
         feedback.setApproved(false);
         Feedback savedFeedback = feedbackRepository.save(feedback);
         return savedFeedback.getId();
+    }
+
+    public List<Feedback> getFeedbacksForDashBoard() {//dy ll dashboard approve or not for that I will not use dto
+        return feedbackRepository.findAll();
+    }
+    public List<Feedback> getFeedBacksForUnapproved() {
+        return feedbackRepository.findAllByApprovedFalse();
+    }
+
+    public void deleteFeedback(final Long id) {
+        feedbackRepository.deleteById(id);
     }
 }
