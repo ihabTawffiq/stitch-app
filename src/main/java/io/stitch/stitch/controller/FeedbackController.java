@@ -1,7 +1,7 @@
 package io.stitch.stitch.controller;
 
 import io.stitch.stitch.dto.requets.SendFeedbackRequest;
-import io.stitch.stitch.entity.Feedback;
+import io.stitch.stitch.dto.response.FeedBackResponse;
 import io.stitch.stitch.service.FeedbackService;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.http.ResponseEntity;
@@ -24,11 +24,11 @@ public class FeedbackController {
         return ResponseEntity.ok(feedbackService.createFeedback(sendFeedbackRequest));
     }
     @GetMapping
-    public ResponseEntity<List<Feedback>> getFeedbacks() {
+    public ResponseEntity<List<FeedBackResponse>> getFeedbacks() {
         return ResponseEntity.ok(feedbackService.getFeedbacksForDashBoard());
     }
     @GetMapping("/unapproved")
-    public ResponseEntity<List<Feedback>> getUnapprovedFeedbacks() {
+    public ResponseEntity<List<FeedBackResponse>> getUnapprovedFeedbacks() {
         return ResponseEntity.ok(feedbackService.getFeedBacksForUnapproved());
     }
     @DeleteMapping("/{id}")
