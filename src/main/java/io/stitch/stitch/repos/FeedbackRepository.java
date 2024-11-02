@@ -7,4 +7,5 @@ import java.util.List;
 
 public interface FeedbackRepository extends MongoRepository<Feedback, Long> {
 List<Feedback> findAllByApprovedFalse();
+List<Feedback> findAllByApprovedTrueAndMachineId(Long machineId);
 }

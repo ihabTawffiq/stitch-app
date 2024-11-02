@@ -1,5 +1,6 @@
 package io.stitch.stitch.service;
 
+import io.stitch.stitch.dto.app.AppFeedbackDTO;
 import io.stitch.stitch.dto.requets.SendFeedbackRequest;
 import io.stitch.stitch.dto.response.FeedBackResponse;
 import io.stitch.stitch.entity.Feedback;
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 @Service
@@ -24,6 +27,15 @@ public class FeedbackService {
         this.feedbackRepository = feedbackRepository;
         this.machineRepository = machineRepository;
         this.primarySequenceService = primarySequenceService;
+    }
+    public Long updateFeedBackStatus(Long feedbackId, Boolean status){
+        Optional<Feedback> feedback = feedbackRepository.findById(feedbackId);
+        if(feedback.isEmpty()){// what exception when it is not found
+            return (long) -1;
+        }
+        feedback.get().setApproved(status);
+        feedbackRepository.save(feedback.get());
+        return feedbackId;
     }
 
     public Long createFeedback(SendFeedbackRequest sendFeedbackRequest) {
@@ -48,6 +60,18 @@ public class FeedbackService {
         }
         return feedBackResponsesList.get();
     }
+
+    public List<AppFeedbackDTO> getFeedBacksForMachine(Long machineId) {
+        List<Feedback> feedbackList = feedbackRepository.findAllByApprovedTrueAndMachineId(machineId);
+        List<AppFeedbackDTO> feedbackDTOList = new ArrayList<>();
+        for (Feedback feedback : feedbackList){
+            AppFeedbackDTO appFeedbackDTO = new AppFeedbackDTO();
+            convertFeedBackToAppDTO(appFeedbackDTO,feedback);
+            feedbackDTOList.add(appFeedbackDTO);
+        }
+        return feedbackDTOList;
+    }
+
     public List<FeedBackResponse> getFeedBacksForUnapproved() {
         AtomicReference<List<FeedBackResponse>> feedBackResponsesList = new AtomicReference<>(new ArrayList<>());
         List<Feedback> feedbacks = feedbackRepository.findAllByApprovedFalse();
@@ -68,8 +92,17 @@ public class FeedbackService {
         feedBackResponse.setUsername(feedback.getUsername());
         feedBackResponse.setRate(feedback.getRate());
         feedBackResponse.setId(feedback.getId());
-        feedBackResponse.setMachineName(feedback.getMachine().getBrand().getName()
-        + " " + feedback.getMachine().getModel());
+        if(Objects.nonNull(feedback.getMachine()) && Objects.nonNull(feedback.getMachine().getBrand())){
+            feedBackResponse.setMachineName(feedback.getMachine().getBrand().getName()
+                    + " " + feedback.getMachine().getModel());
+        }
+    }
+
+    private void convertFeedBackToAppDTO(AppFeedbackDTO appFeedbackDTO,Feedback feedback){
+        appFeedbackDTO.setId(feedback.getId());
+        appFeedbackDTO.setMessage(feedback.getMessage());
+        appFeedbackDTO.setUsername(feedback.getUsername());
+        appFeedbackDTO.setRate(feedback.getRate());
     }
 
 }
