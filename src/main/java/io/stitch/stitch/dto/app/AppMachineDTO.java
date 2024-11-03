@@ -41,4 +41,6 @@ public class AppMachineDTO {
 
     private CategoryDTO category;
 
+    private Double rate;
+
 }

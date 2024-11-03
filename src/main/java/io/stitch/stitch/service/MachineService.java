@@ -177,10 +177,12 @@ public class MachineService {
         machineDTO.setBrand(machine.getBrand() == null ? null : machine.getBrand().getId());
         machineDTO.setTags(machine.getTags().stream().map(Tag::getId).toList());
         machineDTO.setCategory(machine.getCategory() == null ? null : machine.getCategory().getId());
+        machineDTO.setRate(machine.getRate());
         return machineDTO;
     }
 
     private void mapToEntity(final MachineDTO machineDTO, final Machine machine) {
+        machine.setRate(0.0);
         machine.setModel(machineDTO.getModel());
         machine.setDescription(machineDTO.getDescription());
         machine.setStock(machineDTO.getStock());
@@ -209,6 +211,7 @@ public class MachineService {
         machineDTO.setBrand(machine.getBrand() == null ? null : BrandMapper.mapToAppDTO(machine.getBrand(), new BrandDTO()));
         machineDTO.setTags(machine.getTags().stream().map(tag -> TagMapper.mapToAppDTO(tag, new TagDTO())).toList());
         machineDTO.setCategory(machine.getCategory() == null ? null : CategoryMapper.mapToAppDTO(machine.getCategory(), new CategoryDTO()));
+        machineDTO.setRate(machine.getRate());
         return machineDTO;
     }
 

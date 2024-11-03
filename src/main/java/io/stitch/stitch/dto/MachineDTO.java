@@ -39,4 +39,6 @@ public class MachineDTO {
     @NotNull
     private Long category;
 
+    private Double rate;
+
 }

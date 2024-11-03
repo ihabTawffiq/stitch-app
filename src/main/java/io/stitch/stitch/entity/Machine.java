@@ -47,4 +47,7 @@ public class Machine {
     @DocumentReference(lazy = true)
     @NotNull
     private Category category;
+
+    private double rate;
+
 }
