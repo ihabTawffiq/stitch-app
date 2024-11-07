@@ -55,7 +55,7 @@ public class MachineController {
 
 
     @GetMapping("/{id}")
-    public ResponseEntity<MachineDTO> getMachine(@PathVariable(name = "id") final Long id) {
+    public ResponseEntity<AppMachineDTO> getMachine(@PathVariable(name = "id") final Long id) {
         return ResponseEntity.ok(machineService.get(id));
     }
 

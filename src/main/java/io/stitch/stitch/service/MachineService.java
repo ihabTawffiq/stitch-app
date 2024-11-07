@@ -58,8 +58,8 @@ public class MachineService {
         return machineList.stream().map(machine -> mapToAppDTO(machine, new AppMachineDTO())).toList();
     }
 
-    public MachineDTO get(final Long id) {
-        return machineRepository.findById(id).map(machine -> mapToDTO(machine, new MachineDTO())).orElseThrow(NotFoundException::new);
+    public AppMachineDTO get(final Long id) {
+        return machineRepository.findById(id).map(machine -> mapToAppDTO(machine, new AppMachineDTO())).orElseThrow(NotFoundException::new);
     }
 
     public Long create(final MachineDTO machineDTO) {
