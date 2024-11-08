@@ -1,9 +1,6 @@
 package io.stitch.stitch.repos;
 
-import io.stitch.stitch.entity.Brand;
-import io.stitch.stitch.entity.Category;
-import io.stitch.stitch.entity.Machine;
-import io.stitch.stitch.entity.Tag;
+import io.stitch.stitch.entity.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -32,4 +29,5 @@ public interface MachineRepository extends MongoRepository<Machine, Long> {
 
     List<Machine> findAllByRateNot(int rate);
 
+    List<Machine> findByIdIn(List<Long> ids);
 }
