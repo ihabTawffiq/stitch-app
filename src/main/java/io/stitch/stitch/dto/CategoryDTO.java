@@ -5,11 +5,15 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 
 @Getter
 @Setter
-public class CategoryDTO {
-
+public class CategoryDTO implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 4643112658215427531L;
     private Long id;
 
     @NotNull

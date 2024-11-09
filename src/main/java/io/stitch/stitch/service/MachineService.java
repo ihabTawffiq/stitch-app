@@ -17,6 +17,7 @@ import io.stitch.stitch.repos.CategoryRepository;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.repos.TagRepository;
 import io.stitch.stitch.util.NotFoundException;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -48,6 +49,7 @@ public class MachineService {
         return response;
     }
 
+    @Cacheable(value = "longCache", key = "'allMachines:' + #offset + ':' + #limit")
     public List<AppMachineDTO> findAll(final Integer offset, final Integer limit) {
         List<Machine> machineList;
         if (offset == -1) {
@@ -58,6 +60,7 @@ public class MachineService {
         return machineList.stream().map(machine -> mapToAppDTO(machine, new AppMachineDTO())).toList();
     }
 
+    @Cacheable(value = "longCache", key = "#id")
     public AppMachineDTO get(final Long id) {
         return machineRepository.findById(id).map(machine -> mapToAppDTO(machine, new AppMachineDTO())).orElseThrow(NotFoundException::new);
     }
@@ -79,6 +82,7 @@ public class MachineService {
         machineRepository.deleteById(id);
     }
 
+    @Cacheable(value = "longCache", key = "'allMachines:' + #tagIds + #offset + ':' + #limit")
     public List<AppMachineDTO> getMachinesByTag(final Long[] tagIds, final Integer offset, final Integer limit) {
         List<Machine> machineList;
         List<Tag> tagList = tagRepository.findAllByIdIn(Arrays.stream(tagIds).toList());
@@ -95,6 +99,7 @@ public class MachineService {
         return machineDTOList;
     }
 
+    @Cacheable(value = "longCache", key = "'allMachines:' + #categoryId + #offset + ':' + #limit")
     public List<AppMachineDTO> getMachinesByCategory(final Long categoryId, final Integer offset, final Integer limit) {
 
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
@@ -116,6 +121,7 @@ public class MachineService {
         return null;
     }
 
+    @Cacheable(value = "longCache", key = "'allMachines:' + #brandId + #offset + ':' + #limit")
     public List<AppMachineDTO> getMachinesByBrand(final Long brandId, final Integer offset, final Integer limit) {
         Optional<Brand> brandOptional = brandRepository.findById(brandId);
         if (brandOptional.isPresent()) {
@@ -136,6 +142,7 @@ public class MachineService {
 
     }
 
+    @Cacheable(value = "longCache", key = "'allMachines:' + #tagIds + #categoryIds + ':' + #brandIds")
     public List<AppMachineDTO> filterMachines(List<Long> tagIds, List<Long> brandIds, List<Long> categoryIds) {
         List<Tag> tagList;
         List<Brand> brandList;

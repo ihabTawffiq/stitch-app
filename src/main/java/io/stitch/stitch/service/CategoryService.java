@@ -8,6 +8,9 @@ import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.util.NotFoundException;
 import io.stitch.stitch.util.ReferencedWarning;
 import java.util.List;
+
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -26,6 +29,7 @@ public class CategoryService {
         this.primarySequenceService = primarySequenceService;
     }
 
+    @Cacheable(value = "longCache", key = "'allCategories'")
     public List<CategoryDTO> findAll() {
         final List<Category> categories = categoryRepository.findAll(Sort.by("id"));
         return categories.stream()
@@ -33,12 +37,14 @@ public class CategoryService {
                 .toList();
     }
 
+    @Cacheable(value = "longCache", key = "#id")
     public CategoryDTO get(final Long id) {
         return categoryRepository.findById(id)
                 .map(category -> mapToDTO(category, new CategoryDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
+    @CacheEvict(value = "longCache",key = "'allCategories'")
     public Long create(final CategoryDTO categoryDTO) {
         final Category category = new Category();
         category.setId(primarySequenceService.getNextValue());
@@ -46,6 +52,7 @@ public class CategoryService {
         return categoryRepository.save(category).getId();
     }
 
+    @CacheEvict(value = "longCache",key = "#id")
     public void update(final Long id, final CategoryDTO categoryDTO) {
         final Category category = categoryRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
@@ -53,6 +60,7 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
+    @CacheEvict(value = "longCache",key = "#id")
     public void delete(final Long id) {
         categoryRepository.deleteById(id);
     }

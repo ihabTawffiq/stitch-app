@@ -8,6 +8,8 @@ import io.stitch.stitch.entity.Machine;
 import io.stitch.stitch.repos.FeedbackRepository;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.util.NotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,7 @@ public class FeedbackService {
         this.primarySequenceService = primarySequenceService;
     }
 
+    @CacheEvict(value = "longCache",key = "'UnapprovedFeedbacks'")
     public Long updateFeedBackStatus(Long feedbackId, Boolean status) {
         Optional<Feedback> feedback = feedbackRepository.findById(feedbackId);
         if (feedback.isEmpty()) {// what exception when it is not found
@@ -41,6 +44,7 @@ public class FeedbackService {
         return feedbackId;
     }
 
+    @CacheEvict(value = "longCache",key = "'allFeedbacks'")
     public Long createFeedback(SendFeedbackRequest sendFeedbackRequest) {
         Feedback feedback = new Feedback();
         feedback.setId(primarySequenceService.getNextValue());
@@ -53,6 +57,7 @@ public class FeedbackService {
         return savedFeedback.getId();
     }
 
+    @Cacheable(value = "longCache", key = "'allFeedbacks'")
     public List<FeedBackResponse> getFeedbacksForDashBoard() {
         AtomicReference<List<FeedBackResponse>> feedBackResponsesList = new AtomicReference<>(new ArrayList<>());
         List<Feedback> feedbacks = feedbackRepository.findAll();
@@ -64,6 +69,7 @@ public class FeedbackService {
         return feedBackResponsesList.get();
     }
 
+    @Cacheable(value = "longCache", key = "'machineFeedbacks'")
     public List<AppFeedbackDTO> getFeedBacksForMachine(Long machineId) {
         List<Feedback> feedbackList = feedbackRepository.findAllByApprovedTrueAndMachineId(machineId);
         List<AppFeedbackDTO> feedbackDTOList = new ArrayList<>();
@@ -75,6 +81,7 @@ public class FeedbackService {
         return feedbackDTOList;
     }
 
+    @Cacheable(value = "longCache", key = "'UnapprovedFeedbacks'")
     public List<FeedBackResponse> getFeedBacksForUnapproved() {
         AtomicReference<List<FeedBackResponse>> feedBackResponsesList = new AtomicReference<>(new ArrayList<>());
         List<Feedback> feedbacks = feedbackRepository.findAllByApprovedFalse();
@@ -86,6 +93,7 @@ public class FeedbackService {
         return feedBackResponsesList.get();
     }
 
+    @CacheEvict(value = "longCache",key = "#id")
     public void deleteFeedback(final Long id) {
         feedbackRepository.deleteById(id);
     }
@@ -108,20 +116,5 @@ public class FeedbackService {
         appFeedbackDTO.setRate(feedback.getRate());
     }
 
-    @Scheduled(cron = "0 0 * * * ?")
-    private void scheduledMachineFeedback() {
-        List<Machine> machineList = machineRepository.findAllByRateNot(-1);
-        for (Machine machine : machineList) {
-            List<Feedback> machineFeedbacks = feedbackRepository.findAllByApprovedTrueAndMachineId(machine.getId());
-            if (!machineFeedbacks.isEmpty()) {
-                double sum = machineFeedbacks.stream().mapToDouble(Feedback::getRate).sum();
-                Double machineRate = sum / machineFeedbacks.size();
-                if (!machineRate.equals(machine.getRate())) {
-                    machine.setRate(machineRate);
-                    machineRepository.save(machine);
-                }
-            }
-        }
-    }
 
 }

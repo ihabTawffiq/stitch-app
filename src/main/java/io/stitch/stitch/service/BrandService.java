@@ -7,6 +7,8 @@ import io.stitch.stitch.repos.BrandRepository;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.util.NotFoundException;
 import io.stitch.stitch.util.ReferencedWarning;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -26,15 +28,18 @@ public class BrandService {
         this.primarySequenceService = primarySequenceService;
     }
 
+    @Cacheable(value = "longCache", key = "'allBrands'")
     public List<BrandDTO> findAll() {
         final List<Brand> brands = brandRepository.findAll(Sort.by("id"));
         return brands.stream().map(brand -> mapToDTO(brand, new BrandDTO())).toList();
     }
 
+    @Cacheable(value = "longCache", key = "#id")
     public BrandDTO get(final Long id) {
         return brandRepository.findById(id).map(brand -> mapToDTO(brand, new BrandDTO())).orElseThrow(NotFoundException::new);
     }
 
+    @CacheEvict(value = "longCache", key = "'allBrands'")
     public Long create(final BrandDTO brandDTO) {
         final Brand brand = new Brand();
         brand.setId(primarySequenceService.getNextValue());
@@ -42,12 +47,14 @@ public class BrandService {
         return brandRepository.save(brand).getId();
     }
 
+    @CacheEvict(value = "longCache", key = "#id")
     public void update(final Long id, final BrandDTO brandDTO) {
         final Brand brand = brandRepository.findById(id).orElseThrow(NotFoundException::new);
         mapToEntity(brandDTO, brand);
         brandRepository.save(brand);
     }
 
+    @CacheEvict(value = "longCache", key = "#id")
     public void delete(final Long id) {
         brandRepository.deleteById(id);
     }
