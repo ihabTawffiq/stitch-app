@@ -4,9 +4,14 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 @Getter
 @Setter
-public class BannerDTO {
+public class BannerDTO implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 2813286534147099477L;
 
     private Long id;
 

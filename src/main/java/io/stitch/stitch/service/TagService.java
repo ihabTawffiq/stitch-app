@@ -7,6 +7,8 @@ import io.stitch.stitch.repos.TagRepository;
 import io.stitch.stitch.util.NotFoundException;
 import java.util.List;
 
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +26,7 @@ public class TagService {
         this.machineRepository = machineRepository;
     }
 
+    @Cacheable(value = "longCache", key = "'allTags'")
     public List<TagDTO> findAll() {
         final List<Tag> tags = tagRepository.findAll(Sort.by("id"));
         return tags.stream()
@@ -31,12 +34,14 @@ public class TagService {
                 .toList();
     }
 
+    @Cacheable(value = "longCache", key = "#id")
     public TagDTO get(final Long id) {
         return tagRepository.findById(id)
                 .map(tag -> mapToDTO(tag, new TagDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
+    @CacheEvict(value = "longCache", key = "'allTags'")
     public Long create(final TagDTO tagDTO) {
         final Tag tag = new Tag();
         tag.setId(primarySequenceService.getNextValue());
@@ -44,6 +49,7 @@ public class TagService {
         return tagRepository.save(tag).getId();
     }
 
+    @CacheEvict(value = "longCache", key = "'allTags'")
     public void update(final Long id, final TagDTO tagDTO) {
         final Tag tag = tagRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
@@ -51,6 +57,7 @@ public class TagService {
         tagRepository.save(tag);
     }
 
+    @CacheEvict(value = "longCache", key = "'allTags'")
     public void delete(final Long id) {
         final Tag tag = tagRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
