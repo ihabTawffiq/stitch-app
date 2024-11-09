@@ -12,10 +12,17 @@ public class CorsConfig {
     public CorsFilter corsFilter() {
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         CorsConfiguration config = new CorsConfiguration();
+
         config.setAllowCredentials(true);
-        config.addAllowedOrigin("*");
+        config.addAllowedOrigin("http://localhost:8080");
+        config.addAllowedOrigin("http://localhost:4200");
+        config.addAllowedOrigin("https://stitch-app-production.up.railway.app");
+        config.addAllowedOrigin("http://stitch-app-production.up.railway.app");
+        config.addAllowedOrigin("https://stitch-app.railway.internal");
+        config.addAllowedOrigin("http://stitch-app.railway.internal");
         config.addAllowedHeader("*");
         config.addAllowedMethod("*");
+
         source.registerCorsConfiguration("/**", config);
         return new CorsFilter(source);
     }
