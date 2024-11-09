@@ -15,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/machines", produces = MediaType.APPLICATION_JSON_VALUE)
+@CrossOrigin(origins = "*", allowedHeaders = "*")
 public class MachineController {
 
     private final MachineService machineService;
