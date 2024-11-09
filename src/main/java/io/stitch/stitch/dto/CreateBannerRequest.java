@@ -6,11 +6,15 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 
+import java.io.Serial;
+import java.io.Serializable;
+
 
 @Getter
 @Setter
-public class CreateBannerRequest {
-
+public class CreateBannerRequest implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 2668236157120037621L;
     @Id
     private Long id;
 

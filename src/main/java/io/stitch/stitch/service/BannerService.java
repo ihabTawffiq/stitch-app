@@ -12,6 +12,8 @@ import io.stitch.stitch.repos.BrandRepository;
 import io.stitch.stitch.repos.TagRepository;
 import io.stitch.stitch.util.CloudinaryManager;
 import io.stitch.stitch.util.NotFoundException;
+import org.springframework.cache.annotation.CacheEvict;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
@@ -36,6 +38,7 @@ public class BannerService {
         this.brandRepository = brandRepository;
     }
 
+    @Cacheable(value = "longCache", key = "'allBanners'")
     public List<BannerDTO> findAll() {
         final List<Banner> banners = bannerRepository.findAll(Sort.by("bannerOrder"));
         return banners.stream().map(banner -> (BannerDTO) mapToDTO(banner, new BannerDTO())).toList();
@@ -60,12 +63,14 @@ public class BannerService {
     }
 
 
+    @CacheEvict(value = "longCache", key = "'allBanners'")
     public Long createNewBanner(final CreateBannerRequest createBannerRequest) {
         Banner banner = new Banner();
         mapRequestToEntity(createBannerRequest, banner);
         return bannerRepository.save(banner).getId();
     }
 
+    @CacheEvict(value = "longCache", key = "'allBanners'")
     public void delete(final Long id) throws IOException {
         Banner banner = bannerRepository.findById(id).orElseThrow(NotFoundException::new);
         cloudinaryManager.deleteImageFromCloud(banner.getImageURL());

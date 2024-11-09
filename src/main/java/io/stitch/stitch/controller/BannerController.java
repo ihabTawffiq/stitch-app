@@ -38,6 +38,6 @@ public class BannerController {
 
         bannerService.delete(id);
 
-        return ResponseEntity.noContent().build();//enta bat3ml keda dh eh ma3rfsh
+        return ResponseEntity.noContent().build();
     }
 }

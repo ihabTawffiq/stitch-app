@@ -2,6 +2,9 @@ package io.stitch.stitch.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
@@ -9,8 +12,9 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class MachineDTO {
-
+public class MachineDTO implements Serializable {
+    @Serial
+    private static final long serialVersionUID = -7786388330051215539L;
     private Long id;
 
     @NotNull
