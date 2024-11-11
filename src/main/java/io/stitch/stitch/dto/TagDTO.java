@@ -23,4 +23,6 @@ public class TagDTO implements Serializable {
     @Size(max = 1080)
     private String description;
 
+    private Boolean display;
+
 }

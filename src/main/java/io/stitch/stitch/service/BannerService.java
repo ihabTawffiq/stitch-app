@@ -63,14 +63,14 @@ public class BannerService {
     }
 
 
-    @CacheEvict(value = "longCache", key = "'allBanners'")
+    @CacheEvict(value = "longCache",allEntries = true)
     public Long createNewBanner(final CreateBannerRequest createBannerRequest) {
         Banner banner = new Banner();
         mapRequestToEntity(createBannerRequest, banner);
         return bannerRepository.save(banner).getId();
     }
 
-    @CacheEvict(value = "longCache", key = "'allBanners'")
+    @CacheEvict(value = "longCache", allEntries = true)
     public void delete(final Long id) throws IOException {
         Banner banner = bannerRepository.findById(id).orElseThrow(NotFoundException::new);
         cloudinaryManager.deleteImageFromCloud(banner.getImageURL());

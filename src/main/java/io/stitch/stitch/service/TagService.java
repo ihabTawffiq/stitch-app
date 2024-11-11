@@ -33,15 +33,21 @@ public class TagService {
                 .map(tag -> mapToDTO(tag, new TagDTO()))
                 .toList();
     }
+    @Cacheable(value = "longCache", key = "'displayedTags'")
+    public List<TagDTO> findAllByDisplay(Boolean display) {
+        final List<Tag> tags = tagRepository.findAllByDisplay(display);
+        return tags.stream()
+                .map(tag -> mapToDTO(tag, new TagDTO()))
+                .toList();
+    }
 
-    @Cacheable(value = "longCache", key = "#id")
     public TagDTO get(final Long id) {
         return tagRepository.findById(id)
                 .map(tag -> mapToDTO(tag, new TagDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
-    @CacheEvict(value = "longCache", key = "'allTags'")
+    @CacheEvict(value = "longCache", allEntries = true)
     public Long create(final TagDTO tagDTO) {
         final Tag tag = new Tag();
         tag.setId(primarySequenceService.getNextValue());
@@ -49,7 +55,7 @@ public class TagService {
         return tagRepository.save(tag).getId();
     }
 
-    @CacheEvict(value = "longCache", key = "'allTags'")
+    @CacheEvict(value = "longCache", allEntries = true)
     public void update(final Long id, final TagDTO tagDTO) {
         final Tag tag = tagRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
@@ -57,7 +63,7 @@ public class TagService {
         tagRepository.save(tag);
     }
 
-    @CacheEvict(value = "longCache", key = "'allTags'")
+    @CacheEvict(value = "longCache", allEntries = true)
     public void delete(final Long id) {
         final Tag tag = tagRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
@@ -71,12 +77,14 @@ public class TagService {
         tagDTO.setId(tag.getId());
         tagDTO.setName(tag.getName());
         tagDTO.setDescription(tag.getDescription());
+        tagDTO.setDisplay(tag.getDisplay());
         return tagDTO;
     }
 
     private Tag mapToEntity(final TagDTO tagDTO, final Tag tag) {
         tag.setName(tagDTO.getName());
         tag.setDescription(tagDTO.getDescription());
+        tag.setDisplay(tagDTO.getDisplay());
         return tag;
     }
 

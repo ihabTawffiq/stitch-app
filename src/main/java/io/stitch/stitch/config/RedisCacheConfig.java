@@ -31,7 +31,7 @@ public class RedisCacheConfig {
         // Long-lived cache configuration
         RedisCacheConfiguration longCacheConfig = RedisCacheConfiguration.defaultCacheConfig()
                 .serializeValuesWith(RedisSerializationContext.SerializationPair.fromSerializer(serializer))
-                .entryTtl(Duration.ofMinutes(15))
+                .entryTtl(Duration.ofMinutes(60))
                 .disableCachingNullValues();
 
         return RedisCacheManager.builder(redisConnectionFactory)

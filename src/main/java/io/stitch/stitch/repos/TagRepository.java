@@ -11,4 +11,6 @@ import java.util.List;
 public interface TagRepository extends MongoRepository<Tag, Long> {
 
     List<Tag> findAllByIdIn(Collection<Long> id);
+    List<Tag> findAllByDisplay(Boolean display);
+
 }

@@ -19,7 +19,7 @@ public class CronJobScheduledTasks {
         this.machineRepository = machineRepository;
     }
 
-    @Scheduled(cron = "0 0 * * * ?")
+    @Scheduled(cron = "0 0 0 * * ?")
     private void scheduledMachineFeedback() {
         List<Machine> machineList = machineRepository.findAllByRateNot(-1);
         for (Machine machine : machineList) {

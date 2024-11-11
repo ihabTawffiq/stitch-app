@@ -33,7 +33,7 @@ public class FeedbackService {
         this.primarySequenceService = primarySequenceService;
     }
 
-    @CacheEvict(value = "longCache",key = "'UnapprovedFeedbacks'")
+    @CacheEvict(value = "longCache",allEntries = true)
     public Long updateFeedBackStatus(Long feedbackId, Boolean status) {
         Optional<Feedback> feedback = feedbackRepository.findById(feedbackId);
         if (feedback.isEmpty()) {// what exception when it is not found
@@ -44,7 +44,7 @@ public class FeedbackService {
         return feedbackId;
     }
 
-    @CacheEvict(value = "longCache",key = "'allFeedbacks'")
+    @CacheEvict(value = "longCache",allEntries = true)
     public Long createFeedback(SendFeedbackRequest sendFeedbackRequest) {
         Feedback feedback = new Feedback();
         feedback.setId(primarySequenceService.getNextValue());
@@ -93,7 +93,7 @@ public class FeedbackService {
         return feedBackResponsesList.get();
     }
 
-    @CacheEvict(value = "longCache",key = "#id")
+    @CacheEvict(value = "longCache",allEntries = true)
     public void deleteFeedback(final Long id) {
         feedbackRepository.deleteById(id);
     }

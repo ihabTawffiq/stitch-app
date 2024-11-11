@@ -29,6 +29,7 @@ public class CategoryService {
         this.primarySequenceService = primarySequenceService;
     }
 
+
     @Cacheable(value = "longCache", key = "'allCategories'")
     public List<CategoryDTO> findAll() {
         final List<Category> categories = categoryRepository.findAll(Sort.by("id"));
@@ -37,14 +38,13 @@ public class CategoryService {
                 .toList();
     }
 
-    @Cacheable(value = "longCache", key = "#id")
     public CategoryDTO get(final Long id) {
         return categoryRepository.findById(id)
                 .map(category -> mapToDTO(category, new CategoryDTO()))
                 .orElseThrow(NotFoundException::new);
     }
 
-    @CacheEvict(value = "longCache",key = "'allCategories'")
+    @CacheEvict(value = "longCache",allEntries = true)
     public Long create(final CategoryDTO categoryDTO) {
         final Category category = new Category();
         category.setId(primarySequenceService.getNextValue());
@@ -52,7 +52,7 @@ public class CategoryService {
         return categoryRepository.save(category).getId();
     }
 
-    @CacheEvict(value = "longCache",key = "#id")
+    @CacheEvict(value = "longCache",allEntries = true)
     public void update(final Long id, final CategoryDTO categoryDTO) {
         final Category category = categoryRepository.findById(id)
                 .orElseThrow(NotFoundException::new);
@@ -60,7 +60,7 @@ public class CategoryService {
         categoryRepository.save(category);
     }
 
-    @CacheEvict(value = "longCache",key = "#id")
+    @CacheEvict(value = "longCache",allEntries = true)
     public void delete(final Long id) {
         categoryRepository.deleteById(id);
     }

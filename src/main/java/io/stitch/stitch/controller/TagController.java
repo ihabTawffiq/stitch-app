@@ -27,6 +27,11 @@ public class TagController {
         return ResponseEntity.ok(tagService.findAll());
     }
 
+    @GetMapping("/display")
+    public ResponseEntity<List<TagDTO>> getAllTagsForDisplay(@RequestParam(name = "display") Boolean display) {
+        return ResponseEntity.ok(tagService.findAllByDisplay(display));
+    }
+
     @GetMapping("/{id}")
     public ResponseEntity<TagDTO> getTag(@PathVariable(name = "id") final Long id) {
         return ResponseEntity.ok(tagService.get(id));
