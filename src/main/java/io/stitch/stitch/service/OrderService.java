@@ -8,6 +8,7 @@ import io.stitch.stitch.entity.Order;
 import io.stitch.stitch.entity.OrderItem;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.repos.OrderRepository;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -35,6 +36,13 @@ public class OrderService {
 
     public List<OrderResponse> getOrdersByStatus(OrderStatus orderStatus){
         List<Order> orders = orderRepository.findAllByStatus(orderStatus);
+        return orders.parallelStream()
+                .map(this::mapEntityToResponse)
+                .toList();
+    }
+
+    public List<OrderResponse> getAllOrders(){
+        List<Order> orders = orderRepository.findAll(Sort.by("id"));
         return orders.parallelStream()
                 .map(this::mapEntityToResponse)
                 .toList();
