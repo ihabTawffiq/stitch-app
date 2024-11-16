@@ -52,7 +52,10 @@ public class MachineController {
         return ResponseEntity.ok(machineService.getMachinesByBrand(id,offset,limit));
     }
 
-
+    @GetMapping("/app/by-model")
+    public ResponseEntity<List<AppMachineDTO>> getMachineByBrand(@RequestParam(name = "model") String model) {
+        return ResponseEntity.ok(machineService.getMachinesByModel(model));
+    }
 
 
     @GetMapping("/{id}")

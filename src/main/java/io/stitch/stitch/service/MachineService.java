@@ -101,7 +101,7 @@ public class MachineService {
         return machineDTOList;
     }
 
-    @Cacheable(value = "longCache", key = "'machinesByTag:' + T(java.util.Arrays).hashCode(#categoryId) + ':' + #offset + ':' + #limit")
+    @Cacheable(value = "longCache", key = "'machinesByTag:' + #categoryId + ':' + #offset + ':' + #limit")
     public List<AppMachineDTO> getMachinesByCategory(final Long categoryId, final Integer offset, final Integer limit) {
 
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
@@ -123,7 +123,7 @@ public class MachineService {
         return null;
     }
 
-    @Cacheable(value = "longCache", key = "'machinesByBrand:' + T(java.util.Arrays).hashCode(#brandId) + ':' + #offset + ':' + #limit")
+    @Cacheable(value = "longCache", key = "'machinesByBrand:' + #brandId + ':' + #offset + ':' + #limit")
     public List<AppMachineDTO> getMachinesByBrand(final Long brandId, final Integer offset, final Integer limit) {
         Optional<Brand> brandOptional = brandRepository.findById(brandId);
         if (brandOptional.isPresent()) {
@@ -142,6 +142,15 @@ public class MachineService {
         }
         return null;
 
+    }
+    @Cacheable(value = "longCache", key = "'machinesByModel:' + #model")
+    public List<AppMachineDTO> getMachinesByModel(final String model) {
+        List<Machine> machineList = machineRepository.findAllByModel(model);
+        List<AppMachineDTO> machineDTOList = new ArrayList<>();
+        for (Machine machine : machineList) {
+            machineDTOList.add(mapToAppDTO(machine, new AppMachineDTO()));
+        }
+        return machineDTOList;
     }
 
     @Cacheable(value = "longCache", key = "'filterMachines:' + T(java.util.Objects).hash(#tagIds) + ':' + T(java.util.Objects).hash(#brandIds) + ':' + T(java.util.Objects).hash(#categoryIds)")

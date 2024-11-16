@@ -6,6 +6,7 @@ import lombok.Setter;
 
 import java.io.Serial;
 import java.io.Serializable;
+import java.time.LocalDate;
 import java.util.List;
 
 @Getter
@@ -20,4 +21,5 @@ public class OrderResponse implements Serializable {
     private String address;
     private Double price;
     private OrderStatus status;
+    private LocalDate createDate;
 }

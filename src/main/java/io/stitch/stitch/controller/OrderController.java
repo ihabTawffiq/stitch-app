@@ -9,6 +9,7 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @RestController
@@ -36,8 +37,24 @@ public class OrderController {
         return ResponseEntity.ok(orderService.getOrderById(id));
     }
 
+    @PutMapping("/update-status")
+    public ResponseEntity<Long> updateOrderStatus(@RequestParam(name = "id") Long id,@RequestParam(name = "orderStatus") OrderStatus orderStatus) {
+        return ResponseEntity.ok(orderService.updateOrderStatus(id,orderStatus));
+    }
+
+    @GetMapping("/get-by-phoneNumber")
+    public ResponseEntity<List<OrderResponse>> getOrdersByPhoneNumber(@RequestParam(name = "phoneNumber") String phoneNumber) {
+        return ResponseEntity.ok(orderService.getAllOrdersByPhoneNumber(phoneNumber));
+    }
+
+    @GetMapping("/get-by-createdDate")
+    public ResponseEntity<List<OrderResponse>> getOrdersByCreatedData(@RequestParam(name = "createdDate") LocalDate createdDate) {
+        return ResponseEntity.ok(orderService.getAllOrdersByCreatedDate(createdDate));
+    }
+
     @GetMapping("/get-all")
-    public ResponseEntity<List<OrderResponse>> getAllOrders() {
-        return ResponseEntity.ok(orderService.getAllOrders());
+    public ResponseEntity<List<OrderResponse>> getAllOrders( @RequestParam(defaultValue = "0") final Integer offset,
+                                                             @RequestParam(defaultValue = "3") final Integer limit) {
+        return ResponseEntity.ok(orderService.getAllOrders(offset,limit));
     }
 }

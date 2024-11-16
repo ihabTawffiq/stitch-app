@@ -8,12 +8,15 @@ import io.stitch.stitch.entity.Order;
 import io.stitch.stitch.entity.OrderItem;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.repos.OrderRepository;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -41,8 +44,27 @@ public class OrderService {
                 .toList();
     }
 
-    public List<OrderResponse> getAllOrders(){
-        List<Order> orders = orderRepository.findAll(Sort.by("id"));
+    public List<OrderResponse> getAllOrders(final Integer offset,final Integer limit){
+        List<Order> orders = new ArrayList<>();
+        if(offset.equals(-1)){
+            orders = orderRepository.findAll(Sort.by("id"));
+        }else {
+            orders = orderRepository.findAll(PageRequest.of(offset, limit)).getContent();
+        }
+        return orders.parallelStream()
+                .map(this::mapEntityToResponse)
+                .toList();
+    }
+
+    public List<OrderResponse> getAllOrdersByCreatedDate(final LocalDate createdDate){
+        List<Order> orders = orderRepository.findAllByCreateAt(createdDate);
+        return orders.parallelStream()
+                .map(this::mapEntityToResponse)
+                .toList();
+    }
+
+    public List<OrderResponse> getAllOrdersByPhoneNumber(final String phoneNumber){
+        List<Order> orders = orderRepository.findAllByPhoneNumber(phoneNumber);
         return orders.parallelStream()
                 .map(this::mapEntityToResponse)
                 .toList();
@@ -52,6 +74,14 @@ public class OrderService {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         return mapEntityToResponse(order);
+    }
+    public Long updateOrderStatus(final Long orderId ,final OrderStatus orderStatus){
+        Optional<Order> order = orderRepository.findById(orderId);
+        if(order.isPresent()){
+            order.get().setStatus(orderStatus);
+            orderRepository.save(order.get());
+        }
+        return orderId;
     }
 
     private Order mapRequestToEntity(final OrderRequest orderRequest) {
@@ -78,6 +108,7 @@ public class OrderService {
                 .sum();
 
         Order order = new Order();
+        order.setCreateAt(LocalDate.now());
         order.setMachines(orderItems);
         order.setPrice(totalPrice);
         order.setId(primarySequenceService.getNextValue());
@@ -99,6 +130,7 @@ public class OrderService {
                 .toList();
 
         OrderResponse orderResponse = new OrderResponse();
+        orderResponse.setCreateDate(order.getCreateAt());
         orderResponse.setOrderId(order.getId());
         orderResponse.setPrice(order.getPrice());
         orderResponse.setFullName(order.getFullName());

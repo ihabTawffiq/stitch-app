@@ -26,6 +26,7 @@ public interface MachineRepository extends MongoRepository<Machine, Long> {
 
     Page<Machine> findAllByBrand(final Brand brandId,final Pageable pageable);
     List<Machine> findAllByBrand(final Brand brandId);
+    List<Machine> findAllByModel(final String model);
 
     List<Machine> findAllByRateNot(int rate);
 
