@@ -16,6 +16,7 @@ public class OrderResponse implements Serializable {
     private static final long serialVersionUID = -1990027114756332435L;
     private Long orderId;
     private List<String> machines;
+    private List<String> spearParts;
     private String fullName;
     private String phoneNumber;
     private String address;

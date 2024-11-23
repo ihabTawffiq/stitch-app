@@ -32,6 +32,11 @@ public class SpearPartController {
         return ResponseEntity.ok(spearPartService.create(spearPartRequest));
     }
 
+    @PutMapping()
+    public ResponseEntity<Long> updateSpearPart(@RequestParam(name = "id") Long id,@RequestBody @Valid final SpearPartRequest spearPartRequest) {
+        return ResponseEntity.ok(spearPartService.update(id,spearPartRequest));
+    }
+
     @GetMapping("/get-by-id")
     public ResponseEntity<SpearPartResponse> getSpearPartById(@RequestParam(name = "id") Long id) {
         return ResponseEntity.ok(spearPartService.getSpearPartById(id));

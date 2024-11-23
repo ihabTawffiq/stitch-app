@@ -19,8 +19,10 @@ public class Order {
 
     @NotNull
     private OrderStatus status;
-    @NotNull
+
     private List<OrderItem> machines;
+
+    private List<SpearPartOrderItem> spearParts;
 
     private Double price;
 

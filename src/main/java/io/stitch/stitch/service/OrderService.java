@@ -3,20 +3,16 @@ package io.stitch.stitch.service;
 import io.stitch.stitch.constants.OrderStatus;
 import io.stitch.stitch.dto.requets.OrderRequest;
 import io.stitch.stitch.dto.response.OrderResponse;
-import io.stitch.stitch.entity.Machine;
-import io.stitch.stitch.entity.Order;
-import io.stitch.stitch.entity.OrderItem;
+import io.stitch.stitch.entity.*;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.repos.OrderRepository;
+import io.stitch.stitch.repos.SpearPartRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,12 +21,14 @@ public class OrderService {
     private final OrderRepository orderRepository;
     private final PrimarySequenceService primarySequenceService;
     private final MachineRepository machineRepository;
+    private final SpearPartRepository spearPartRepository;
 
 
-    public OrderService(OrderRepository orderRepository, PrimarySequenceService primarySequenceService, MachineRepository machineRepository) {
+    public OrderService(OrderRepository orderRepository, PrimarySequenceService primarySequenceService, MachineRepository machineRepository, SpearPartRepository spearPartRepository) {
         this.orderRepository = orderRepository;
         this.primarySequenceService = primarySequenceService;
         this.machineRepository = machineRepository;
+        this.spearPartRepository = spearPartRepository;
     }
 
     public Long createOrder(OrderRequest orderRequest) {
@@ -88,28 +86,50 @@ public class OrderService {
         if (orderRequest == null) throw new IllegalArgumentException("orderRequest cannot be null");
         if (orderRequest.getMachines() == null || orderRequest.getMachines().isEmpty())
             throw new IllegalArgumentException("orderRequest machines cannot be null or empty");
-
-        Map<Long, Long> machineIdCounts = orderRequest.getMachines().stream()
-                .collect(Collectors.groupingBy(id -> id, Collectors.counting()));
-
-        List<Machine> uniqueMachines = machineRepository.findByIdIn(new ArrayList<>(machineIdCounts.keySet()));
-
-        List<OrderItem> orderItems = uniqueMachines.stream()
-                .map(machine -> {
-                    OrderItem orderItem = new OrderItem();
-                    orderItem.setMachine(machine);
-                    orderItem.setQuantity(machineIdCounts.get(machine.getId()).intValue());
-                    return orderItem;
-                })
-                .collect(Collectors.toList());
-
-        double totalPrice = orderItems.stream()
-                .mapToDouble(item -> item.getMachine().getFinalPrice() * item.getQuantity())
-                .sum();
-
+        double totalPrice = 0;
         Order order = new Order();
+        if(Objects.nonNull(orderRequest.getSpearParts())) {
+            Map<Long, Long> machineIdCounts = orderRequest.getMachines().stream()
+                    .collect(Collectors.groupingBy(id -> id, Collectors.counting()));
+
+            List<Machine> uniqueMachines = machineRepository.findByIdIn(new ArrayList<>(machineIdCounts.keySet()));
+
+            List<OrderItem> orderItems = uniqueMachines.stream()
+                    .map(machine -> {
+                        OrderItem orderItem = new OrderItem();
+                        orderItem.setMachine(machine);
+                        orderItem.setQuantity(machineIdCounts.get(machine.getId()).intValue());
+                        return orderItem;
+                    })
+                    .toList();
+            totalPrice+= orderItems.stream()
+                    .mapToDouble(item -> item.getMachine().getFinalPrice() * item.getQuantity())
+                    .sum();
+            order.setMachines(orderItems);
+        }
+
+        if(Objects.nonNull(orderRequest.getSpearParts())){
+            Map<Long, Long> spearPartsIdCounts = orderRequest.getSpearParts().stream()
+                    .collect(Collectors.groupingBy(id -> id, Collectors.counting()));
+
+            List<SpearPart> uniqueSpearParts= spearPartRepository.findByIdIn(new ArrayList<>(spearPartsIdCounts.keySet()));
+
+            List<SpearPartOrderItem> spearPartOrderItems = uniqueSpearParts.stream()
+                    .map(spearPart -> {
+                        SpearPartOrderItem spearPartOrderItem = new SpearPartOrderItem();
+                        spearPartOrderItem.setSpearPart(spearPart);
+                        spearPartOrderItem.setQuantity(spearPartsIdCounts.get(spearPart.getId()).intValue());
+                        return spearPartOrderItem;
+                    })
+                    .toList();
+            totalPrice+= spearPartOrderItems.stream()
+                    .mapToDouble(item -> item.getSpearPart().getPrice() * item.getQuantity())
+                    .sum();
+            order.setSpearParts(spearPartOrderItems);
+        }
+
         order.setCreateAt(LocalDate.now());
-        order.setMachines(orderItems);
+
         order.setPrice(totalPrice);
         order.setId(primarySequenceService.getNextValue());
         order.setAddress(orderRequest.getAddress());
@@ -123,20 +143,30 @@ public class OrderService {
 
     private OrderResponse mapEntityToResponse(final Order order) {
         if (order == null) throw new IllegalArgumentException("order cannot be null");
-
-        List<String> machineNames = order.getMachines().stream()
-                .map(item -> item.getMachine().getBrand().getName() + " " + item.getMachine().getModel() +
-                        " (x" + item.getQuantity() + ")")
-                .toList();
-
         OrderResponse orderResponse = new OrderResponse();
+        if(Objects.nonNull(order.getMachines())){
+            List<String> machineNames = order.getMachines().stream()
+                    .map(item -> item.getMachine().getBrand().getName() + " " + item.getMachine().getModel() +
+                            " (x" + item.getQuantity() + ")")
+                    .toList();
+            orderResponse.setMachines(machineNames);
+        }
+
+        if(Objects.nonNull(order.getSpearParts())){
+            List<String> spearPartNames = order.getSpearParts().stream()
+                    .map(item -> item.getSpearPart().getName() + " " +
+                            " (x" + item.getQuantity() + ")")
+                    .toList();
+            orderResponse.setSpearParts(spearPartNames);
+
+        }
+
         orderResponse.setCreateDate(order.getCreateAt());
         orderResponse.setOrderId(order.getId());
         orderResponse.setPrice(order.getPrice());
         orderResponse.setFullName(order.getFullName());
         orderResponse.setAddress(order.getAddress());
         orderResponse.setPhoneNumber(order.getPhoneNumber());
-        orderResponse.setMachines(machineNames);
         orderResponse.setStatus(order.getStatus());
 
         return orderResponse;

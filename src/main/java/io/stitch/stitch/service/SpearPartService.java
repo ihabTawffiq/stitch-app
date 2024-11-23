@@ -31,6 +31,12 @@ public class SpearPartService {
         return spearPartRepository.save(spearPart).getId();
     }
 
+    public Long update(final Long id, final SpearPartRequest spearPartRequest) {
+        final SpearPart spearPart = spearPartRepository.findById(id).orElseThrow(NotFoundException::new);
+        mapRequestToEntity(spearPartRequest, spearPart);
+        return spearPartRepository.save(spearPart).getId();
+    }
+
     public List<SpearPartResponse> getAllSpearParts(final Integer offset, final Integer limit) {
 
         final List<SpearPartResponse> spearPartResponseList = new ArrayList<>();
