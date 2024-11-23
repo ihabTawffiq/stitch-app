@@ -21,7 +21,6 @@ public class SpearPart {
     private String name;
 
     @NotNull
-    @Size(max = 1080)
     private Double price;
 
     @NotNull
