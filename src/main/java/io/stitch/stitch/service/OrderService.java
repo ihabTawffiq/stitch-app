@@ -84,11 +84,9 @@ public class OrderService {
 
     private Order mapRequestToEntity(final OrderRequest orderRequest) {
         if (orderRequest == null) throw new IllegalArgumentException("orderRequest cannot be null");
-        if (orderRequest.getMachines() == null || orderRequest.getMachines().isEmpty())
-            throw new IllegalArgumentException("orderRequest machines cannot be null or empty");
         double totalPrice = 0;
         Order order = new Order();
-        if(Objects.nonNull(orderRequest.getSpearParts())) {
+        if(Objects.nonNull(orderRequest.getMachines())) {
             Map<Long, Long> machineIdCounts = orderRequest.getMachines().stream()
                     .collect(Collectors.groupingBy(id -> id, Collectors.counting()));
 
