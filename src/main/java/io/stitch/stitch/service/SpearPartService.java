@@ -60,6 +60,7 @@ public class SpearPartService {
         mapEntityToResponse(spearPart, spearPartResponse);
         return spearPartResponse;
     }
+
     public void deleteSpearPart(final Long id) {
         spearPartRepository.deleteById(id);
     }
@@ -69,6 +70,7 @@ public class SpearPartService {
         spearPart.setName(spearPartRequest.getName());
         spearPart.setPrice(spearPartRequest.getPrice());
         spearPart.setImageURL(spearPartRequest.getImageURL());
+        spearPart.setDescription(spearPartRequest.getDescription());
     }
 
     private void mapEntityToResponse(final SpearPart spearPart, final SpearPartResponse spearPartResponse) {
@@ -76,6 +78,7 @@ public class SpearPartService {
         spearPartResponse.setName(spearPart.getName());
         spearPartResponse.setPrice(spearPart.getPrice());
         spearPartResponse.setImageURL(spearPart.getImageURL());
+        spearPartResponse.setDescription(spearPart.getDescription());
     }
 
 }

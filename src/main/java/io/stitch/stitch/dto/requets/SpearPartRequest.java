@@ -9,4 +9,5 @@ public class SpearPartRequest {
     private String imageURL;
     private String name;
     private Double price;
+    private String description;
 }

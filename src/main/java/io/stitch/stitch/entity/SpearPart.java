@@ -27,4 +27,6 @@ public class SpearPart {
     @Size(max = 1080)
     private String imageURL;
 
+    @Size(max = 1080)
+    private String description;
 }

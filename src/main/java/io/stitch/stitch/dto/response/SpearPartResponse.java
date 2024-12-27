@@ -10,4 +10,5 @@ public class SpearPartResponse {
     private String imageURL;
     private String name;
     private Double price;
+    private String description;
 }
