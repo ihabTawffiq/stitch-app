@@ -48,6 +48,18 @@ public class BrandController {
         return ResponseEntity.ok(id);
     }
 
+    @PostMapping("/homepage")
+    public ResponseEntity<Long> addHomepageBrand(@RequestParam(name = "id") final Long brandId) {
+        brandService.updateHomepageBrand(brandId);
+        return ResponseEntity.ok(brandId);
+    }
+
+    @GetMapping("/homepage")
+    public ResponseEntity<List<BrandDTO>> addHomepageBrand() {
+        return ResponseEntity.ok(brandService.findAllHomepageBrands());
+    }
+
+
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteBrand(@PathVariable(name = "id") final Long id) {

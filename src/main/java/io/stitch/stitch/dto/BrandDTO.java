@@ -27,4 +27,6 @@ public class BrandDTO implements Serializable {
     @Size(max = 1080)
     private String logoURL;
 
+    private Boolean isHomepageBrand;
+
 }
