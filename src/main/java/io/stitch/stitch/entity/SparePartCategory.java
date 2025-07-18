@@ -6,13 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
 
 @Document
 @Getter
 @Setter
-public class SpearPart {
+public class SparePartCategory {
 
     @Id
     private Long id;
@@ -21,17 +20,12 @@ public class SpearPart {
     @Size(max = 255)
     private String name;
 
-    @NotNull
-    private Double price;
-
-    @NotNull
-    @Size(max = 1080)
-    private String imageURL;
-
     @Size(max = 1080)
     private String description;
 
-    @DocumentReference(lazy = true)
     @NotNull
-    private SparePartCategory sparePartCategory;
+    @Size(max = 1080)
+    private String logoURL;
+
+    private Boolean isHomepageCategory;
 }

@@ -2,7 +2,10 @@ package io.stitch.stitch.service;
 
 import io.stitch.stitch.dto.requets.SpearPartRequest;
 import io.stitch.stitch.dto.response.SpearPartResponse;
+import io.stitch.stitch.entity.Brand;
+import io.stitch.stitch.entity.SparePartCategory;
 import io.stitch.stitch.entity.SpearPart;
+import io.stitch.stitch.repos.SparePartCategoryRepository;
 import io.stitch.stitch.repos.SpearPartRepository;
 import io.stitch.stitch.util.NotFoundException;
 import org.springframework.data.domain.PageRequest;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -19,10 +23,12 @@ public class SpearPartService {
 
     private final PrimarySequenceService primarySequenceService;
     private final SpearPartRepository spearPartRepository;
+    private final SparePartCategoryRepository sparePartCategoryRepository;
 
-    public SpearPartService(PrimarySequenceService primarySequenceService, SpearPartRepository spearPartRepository) {
+    public SpearPartService(PrimarySequenceService primarySequenceService, SpearPartRepository spearPartRepository, SparePartCategoryRepository sparePartCategoryRepository) {
         this.primarySequenceService = primarySequenceService;
         this.spearPartRepository = spearPartRepository;
+        this.sparePartCategoryRepository = sparePartCategoryRepository;
     }
 
     public Long create(final SpearPartRequest spearPartRequest) {
@@ -61,6 +67,18 @@ public class SpearPartService {
         return spearPartResponse;
     }
 
+    public List<SpearPartResponse> getSparePartsByCategory(final Long id) {
+        final List<SpearPartResponse> spearPartResponseList = new ArrayList<>();
+        final SparePartCategory sparePartCategory = sparePartCategoryRepository.findById(id).orElseThrow(NotFoundException::new);
+        final List<SpearPart> spearPartList =spearPartRepository.findAllBySparePartCategory(sparePartCategory);
+        spearPartList.forEach(spearPart -> {
+            final SpearPartResponse spearPartResponse = new SpearPartResponse();
+            mapEntityToResponse(spearPart, spearPartResponse);
+            spearPartResponseList.add(spearPartResponse);
+        });
+        return spearPartResponseList;
+    }
+
     public void deleteSpearPart(final Long id) {
         spearPartRepository.deleteById(id);
     }
@@ -71,6 +89,8 @@ public class SpearPartService {
         spearPart.setPrice(spearPartRequest.getPrice());
         spearPart.setImageURL(spearPartRequest.getImageURL());
         spearPart.setDescription(spearPartRequest.getDescription());
+        final SparePartCategory sparePartCategory = spearPartRequest.getSparePartCategoryId() == null ? null : sparePartCategoryRepository.findById(spearPartRequest.getSparePartCategoryId()).orElseThrow(() -> new NotFoundException("Spare Part Category not found"));
+        spearPart.setSparePartCategory(sparePartCategory);
     }
 
     private void mapEntityToResponse(final SpearPart spearPart, final SpearPartResponse spearPartResponse) {
@@ -79,6 +99,7 @@ public class SpearPartService {
         spearPartResponse.setPrice(spearPart.getPrice());
         spearPartResponse.setImageURL(spearPart.getImageURL());
         spearPartResponse.setDescription(spearPart.getDescription());
+        spearPartResponse.setSparePartCategoryId(spearPart.getSparePartCategory().getId());
     }
 
 }

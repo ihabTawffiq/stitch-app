@@ -42,6 +42,11 @@ public class SpearPartController {
         return ResponseEntity.ok(spearPartService.getSpearPartById(id));
     }
 
+    @GetMapping("/get-all-by-category")
+    public ResponseEntity<List<SpearPartResponse>> getSparePartsByCategory(@RequestParam(name = "id") Long id) {
+        return ResponseEntity.ok(spearPartService.getSparePartsByCategory(id));
+    }
+
     @DeleteMapping("/delete")
     @ApiResponse(responseCode = "204")
     public ResponseEntity<Void> deleteMachine(@RequestParam(name = "id") Long id) {
