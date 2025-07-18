@@ -11,4 +11,5 @@ public class SpearPartResponse {
     private String name;
     private Double price;
     private String description;
+    private Long sparePartCategoryId;
 }

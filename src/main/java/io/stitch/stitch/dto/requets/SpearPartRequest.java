@@ -10,4 +10,5 @@ public class SpearPartRequest {
     private String name;
     private Double price;
     private String description;
+    private Long sparePartCategoryId;
 }
