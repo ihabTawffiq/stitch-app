@@ -27,4 +27,5 @@ public class Brand {
     @Size(max = 1080)
     private String logoURL;
 
+    private Boolean isHomepageBrand;
 }

@@ -28,9 +28,13 @@ public class BrandService {
         this.primarySequenceService = primarySequenceService;
     }
 
-    @Cacheable(value = "longCache", key = "'allBrands'")
     public List<BrandDTO> findAll() {
         final List<Brand> brands = brandRepository.findAll(Sort.by("id"));
+        return brands.stream().map(brand -> mapToDTO(brand, new BrandDTO())).toList();
+    }
+
+    public List<BrandDTO> findAllHomepageBrands() {
+        final List<Brand> brands = brandRepository.findAllByIsHomepageBrand(Boolean.TRUE,Sort.by("id"));
         return brands.stream().map(brand -> mapToDTO(brand, new BrandDTO())).toList();
     }
 
@@ -38,22 +42,27 @@ public class BrandService {
         return brandRepository.findById(id).map(brand -> mapToDTO(brand, new BrandDTO())).orElseThrow(NotFoundException::new);
     }
 
-    @CacheEvict(value = "longCache", allEntries = true)
     public Long create(final BrandDTO brandDTO) {
         final Brand brand = new Brand();
         brand.setId(primarySequenceService.getNextValue());
+        brand.setIsHomepageBrand(Boolean.FALSE);
         mapToEntity(brandDTO, brand);
         return brandRepository.save(brand).getId();
     }
 
-    @CacheEvict(value = "longCache", allEntries = true)
     public void update(final Long id, final BrandDTO brandDTO) {
         final Brand brand = brandRepository.findById(id).orElseThrow(NotFoundException::new);
         mapToEntity(brandDTO, brand);
         brandRepository.save(brand);
     }
 
-    @CacheEvict(value = "longCache", allEntries = true)
+    public void updateHomepageBrand(final Long brandId) {
+        final Brand brand = brandRepository.findById(brandId).orElseThrow(NotFoundException::new);
+        brand.setIsHomepageBrand(!brand.getIsHomepageBrand());
+        brandRepository.save(brand);
+    }
+
+
     public void delete(final Long id) {
         brandRepository.deleteById(id);
     }
@@ -63,6 +72,7 @@ public class BrandService {
         brandDTO.setName(brand.getName());
         brandDTO.setDescription(brand.getDescription());
         brandDTO.setLogoURL(brand.getLogoURL());
+        brandDTO.setIsHomepageBrand(brand.getIsHomepageBrand());
         return brandDTO;
     }
 
