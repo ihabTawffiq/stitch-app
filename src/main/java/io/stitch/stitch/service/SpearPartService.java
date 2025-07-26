@@ -1,5 +1,6 @@
 package io.stitch.stitch.service;
 
+import io.stitch.stitch.dto.SparePartCategoryDTO;
 import io.stitch.stitch.dto.requets.SpearPartRequest;
 import io.stitch.stitch.dto.response.SpearPartResponse;
 import io.stitch.stitch.entity.Brand;
@@ -40,6 +41,7 @@ public class SpearPartService {
     public Long update(final Long id, final SpearPartRequest spearPartRequest) {
         final SpearPart spearPart = spearPartRepository.findById(id).orElseThrow(NotFoundException::new);
         mapRequestToEntity(spearPartRequest, spearPart);
+        spearPart.setId(id);
         return spearPartRepository.save(spearPart).getId();
     }
 
@@ -99,7 +101,18 @@ public class SpearPartService {
         spearPartResponse.setPrice(spearPart.getPrice());
         spearPartResponse.setImageURL(spearPart.getImageURL());
         spearPartResponse.setDescription(spearPart.getDescription());
-        spearPartResponse.setSparePartCategoryId(spearPart.getSparePartCategory().getId());
+        SparePartCategoryDTO sparePartCategoryDTO = getSparePartCategoryDTO(spearPart);
+        spearPartResponse.setSparePartCategory(sparePartCategoryDTO);
+    }
+
+    private static SparePartCategoryDTO getSparePartCategoryDTO(SpearPart spearPart) {
+        SparePartCategoryDTO sparePartCategoryDTO = new SparePartCategoryDTO();
+        sparePartCategoryDTO.setId(spearPart.getSparePartCategory().getId());
+        sparePartCategoryDTO.setName(spearPart.getSparePartCategory().getName());
+        sparePartCategoryDTO.setDescription(spearPart.getSparePartCategory().getDescription());
+        sparePartCategoryDTO.setIsHomepageCategory(spearPart.getSparePartCategory().getIsHomepageCategory());
+        sparePartCategoryDTO.setLogoURL(spearPart.getSparePartCategory().getLogoURL());
+        return sparePartCategoryDTO;
     }
 
 }

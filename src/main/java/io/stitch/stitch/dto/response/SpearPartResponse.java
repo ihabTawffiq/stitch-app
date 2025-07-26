@@ -1,5 +1,6 @@
 package io.stitch.stitch.dto.response;
 
+import io.stitch.stitch.dto.SparePartCategoryDTO;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,5 +12,5 @@ public class SpearPartResponse {
     private String name;
     private Double price;
     private String description;
-    private Long sparePartCategoryId;
+    private SparePartCategoryDTO sparePartCategory;
 }
