@@ -43,8 +43,10 @@ public class SpearPartController {
     }
 
     @GetMapping("/get-all-by-category")
-    public ResponseEntity<List<SpearPartResponse>> getSparePartsByCategory(@RequestParam(name = "id") Long id) {
-        return ResponseEntity.ok(spearPartService.getSparePartsByCategory(id));
+    public ResponseEntity<List<SpearPartResponse>> getSparePartsByCategory(@RequestParam(name = "id") Long id,
+                                                                           @RequestParam(defaultValue = "0") final Integer offset,
+                                                                           @RequestParam(defaultValue = "3") final Integer limit) {
+        return ResponseEntity.ok(spearPartService.getSparePartsByCategory(id,offset, limit));
     }
 
     @DeleteMapping("/delete")

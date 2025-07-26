@@ -69,10 +69,15 @@ public class SpearPartService {
         return spearPartResponse;
     }
 
-    public List<SpearPartResponse> getSparePartsByCategory(final Long id) {
+    public List<SpearPartResponse> getSparePartsByCategory(final Long id,final Integer offset, final Integer limit) {
         final List<SpearPartResponse> spearPartResponseList = new ArrayList<>();
         final SparePartCategory sparePartCategory = sparePartCategoryRepository.findById(id).orElseThrow(NotFoundException::new);
-        final List<SpearPart> spearPartList =spearPartRepository.findAllBySparePartCategory(sparePartCategory);
+         List<SpearPart> spearPartList;
+        if (limit == -1) {
+            spearPartList = spearPartRepository.findAllBySparePartCategory(sparePartCategory);
+        }else {
+            spearPartList = spearPartRepository.findAllBySparePartCategory(sparePartCategory,PageRequest.of(offset, limit));
+        }
         spearPartList.forEach(spearPart -> {
             final SpearPartResponse spearPartResponse = new SpearPartResponse();
             mapEntityToResponse(spearPart, spearPartResponse);
