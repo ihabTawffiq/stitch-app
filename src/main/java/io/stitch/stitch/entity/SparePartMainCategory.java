@@ -8,11 +8,13 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.DocumentReference;
 
+import java.util.Set;
+
 
 @Document
 @Getter
 @Setter
-public class SparePartCategory {
+public class SparePartMainCategory {
 
     @Id
     private Long id;
@@ -25,8 +27,7 @@ public class SparePartCategory {
     private String description;
 
     @DocumentReference(lazy = true)
-    @NotNull
-    private SparePartMainCategory sparePartMainCategory;
+    private Set<SparePartCategory> sparePartCategory;
 
     @NotNull
     @Size(max = 1080)

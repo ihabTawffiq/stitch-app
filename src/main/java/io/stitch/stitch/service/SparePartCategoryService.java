@@ -2,8 +2,10 @@ package io.stitch.stitch.service;
 
 import io.stitch.stitch.dto.SparePartCategoryDTO;
 import io.stitch.stitch.entity.SparePartCategory;
+import io.stitch.stitch.entity.SparePartMainCategory;
 import io.stitch.stitch.entity.SpearPart;
 import io.stitch.stitch.repos.SparePartCategoryRepository;
+import io.stitch.stitch.repos.SparePartMainCategoryRepository;
 import io.stitch.stitch.repos.SpearPartRepository;
 import io.stitch.stitch.util.NotFoundException;
 import io.stitch.stitch.util.ReferencedWarning;
@@ -11,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -19,11 +22,13 @@ public class SparePartCategoryService {
     private final PrimarySequenceService primarySequenceService;
     private final SparePartCategoryRepository sparePartCategoryRepository;
     private final SpearPartRepository spearPartRepository;
+    private final SparePartMainCategoryRepository sparePartMainCategoryRepository;
 
-    public SparePartCategoryService(PrimarySequenceService primarySequenceService, SparePartCategoryRepository sparePartCategoryRepository, SpearPartRepository spearPartRepository) {
+    public SparePartCategoryService(PrimarySequenceService primarySequenceService, SparePartCategoryRepository sparePartCategoryRepository, SpearPartRepository spearPartRepository, SparePartMainCategoryRepository sparePartMainCategoryRepository) {
         this.primarySequenceService = primarySequenceService;
         this.sparePartCategoryRepository = sparePartCategoryRepository;
         this.spearPartRepository = spearPartRepository;
+        this.sparePartMainCategoryRepository = sparePartMainCategoryRepository;
     }
 
 
@@ -44,7 +49,7 @@ public class SparePartCategoryService {
     public Long create(final SparePartCategoryDTO sparePartCategoryDTO) {
         final SparePartCategory sparePartCategory = new SparePartCategory();
         sparePartCategory.setId(primarySequenceService.getNextValue());
-        sparePartCategory.setIsHomepageCategory(Boolean.FALSE);
+        sparePartCategory.setIsHomepageCategory(Boolean.TRUE);
         mapToEntity(sparePartCategoryDTO, sparePartCategory);
         return sparePartCategoryRepository.save(sparePartCategory).getId();
     }
@@ -72,6 +77,7 @@ public class SparePartCategoryService {
         sparePartCategoryDTO.setDescription(sparePartCategory.getDescription());
         sparePartCategoryDTO.setLogoURL(sparePartCategory.getLogoURL());
         sparePartCategoryDTO.setIsHomepageCategory(sparePartCategory.getIsHomepageCategory());
+        sparePartCategoryDTO.setMainCategoryId(sparePartCategory.getSparePartMainCategory().getId());
         return sparePartCategoryDTO;
     }
 
@@ -79,6 +85,11 @@ public class SparePartCategoryService {
         sparePartCategory.setName(sparePartCategoryDTO.getName());
         sparePartCategory.setDescription(sparePartCategoryDTO.getDescription());
         sparePartCategory.setLogoURL(sparePartCategoryDTO.getLogoURL());
+        Optional<SparePartMainCategory> optionalSparePartMainCategory = sparePartMainCategoryRepository.findById(sparePartCategoryDTO.getMainCategoryId());
+        if (!optionalSparePartMainCategory.isPresent()) {
+            throw new NotFoundException("Main Category not found");
+        }
+        sparePartCategory.setSparePartMainCategory(optionalSparePartMainCategory.get());
         return sparePartCategory;
     }
 

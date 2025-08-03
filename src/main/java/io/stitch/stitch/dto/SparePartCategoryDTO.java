@@ -27,6 +27,8 @@ public class SparePartCategoryDTO implements Serializable {
     @Size(max = 1080)
     private String logoURL;
 
+    private Long mainCategoryId;
+
     private Boolean isHomepageCategory;
 
 }

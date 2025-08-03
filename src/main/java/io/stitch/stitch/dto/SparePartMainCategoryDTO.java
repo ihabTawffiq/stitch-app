@@ -1,20 +1,20 @@
-package io.stitch.stitch.entity;
+package io.stitch.stitch.dto;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.Setter;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
-import org.springframework.data.mongodb.core.mapping.DocumentReference;
+
+import java.io.Serial;
+import java.io.Serializable;
+import java.util.Set;
 
 
-@Document
 @Getter
 @Setter
-public class SparePartCategory {
-
-    @Id
+public class SparePartMainCategoryDTO implements Serializable {
+    @Serial
+    private static final long serialVersionUID = 6425970044687658540L;
     private Long id;
 
     @NotNull
@@ -24,13 +24,12 @@ public class SparePartCategory {
     @Size(max = 1080)
     private String description;
 
-    @DocumentReference(lazy = true)
-    @NotNull
-    private SparePartMainCategory sparePartMainCategory;
+    private Set<SparePartCategoryDTO> sparePartCategories;
 
     @NotNull
     @Size(max = 1080)
     private String logoURL;
 
     private Boolean isHomepageCategory;
+
 }

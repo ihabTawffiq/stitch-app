@@ -50,17 +50,6 @@ public class SparePartCategoryController {
         return ResponseEntity.ok(id);
     }
 
-    @PostMapping("/homepage")
-    public ResponseEntity<Long> addHomepageSparePartCategory(@RequestParam(name = "id") final Long sparePartCategoryId) {
-        sparePartCategoryService.updateHomepageSparePartCategory(sparePartCategoryId);
-        return ResponseEntity.ok(sparePartCategoryId);
-    }
-
-    @GetMapping("/homepage")
-    public ResponseEntity<List<SparePartCategoryDTO>> addHomepageSparePartCategory() {
-        return ResponseEntity.ok(sparePartCategoryService.findAllHomepageSparePartCategory());
-    }
-
 
     @DeleteMapping("/{id}")
     @ApiResponse(responseCode = "204")
