@@ -10,6 +10,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 
@@ -66,7 +67,6 @@ public class SparePartMainCategoryService {
         sparePartMainCategoryDTO.setDescription(sparePartMainCategory.getDescription());
         sparePartMainCategoryDTO.setLogoURL(sparePartMainCategory.getLogoURL());
         sparePartMainCategoryDTO.setIsHomepageCategory(sparePartMainCategory.getIsHomepageCategory());
-        sparePartMainCategoryDTO.setSparePartCategories(sparePartMainCategory.getSparePartCategory().stream().map(sparePartCategory -> categoryMapToDTO(sparePartCategory, new SparePartCategoryDTO())).collect(Collectors.toSet()));
         return sparePartMainCategoryDTO;
     }
 
@@ -74,25 +74,7 @@ public class SparePartMainCategoryService {
         sparePartMainCategory.setName(sparePartMainCategoryDTO.getName());
         sparePartMainCategory.setDescription(sparePartMainCategoryDTO.getDescription());
         sparePartMainCategory.setLogoURL(sparePartMainCategoryDTO.getLogoURL());
-        sparePartMainCategory.setSparePartCategory(sparePartMainCategoryDTO.getSparePartCategories().stream().map(sparePartCategoryDTO -> categoryDTOMapToEntity(sparePartCategoryDTO, new SparePartCategory())).collect(Collectors.toSet()));
         return sparePartMainCategory;
     }
-
-    private SparePartCategoryDTO categoryMapToDTO(final SparePartCategory sparePartCategory, final SparePartCategoryDTO sparePartCategoryDTO) {
-        sparePartCategoryDTO.setId(sparePartCategory.getId());
-        sparePartCategoryDTO.setName(sparePartCategory.getName());
-        sparePartCategoryDTO.setDescription(sparePartCategory.getDescription());
-        sparePartCategoryDTO.setLogoURL(sparePartCategory.getLogoURL());
-        sparePartCategoryDTO.setIsHomepageCategory(sparePartCategory.getIsHomepageCategory());
-        return sparePartCategoryDTO;
-    }
-
-    private SparePartCategory categoryDTOMapToEntity(final SparePartCategoryDTO sparePartCategoryDTO, final SparePartCategory sparePartCategory) {
-        sparePartCategory.setName(sparePartCategoryDTO.getName());
-        sparePartCategory.setDescription(sparePartCategoryDTO.getDescription());
-        sparePartCategory.setLogoURL(sparePartCategoryDTO.getLogoURL());
-        return sparePartCategory;
-    }
-
 
 }

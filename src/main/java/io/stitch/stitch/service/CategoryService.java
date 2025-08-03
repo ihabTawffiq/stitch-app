@@ -1,18 +1,16 @@
 package io.stitch.stitch.service;
 
+import io.stitch.stitch.dto.CategoryDTO;
 import io.stitch.stitch.entity.Category;
 import io.stitch.stitch.entity.Machine;
-import io.stitch.stitch.dto.CategoryDTO;
 import io.stitch.stitch.repos.CategoryRepository;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.util.NotFoundException;
 import io.stitch.stitch.util.ReferencedWarning;
-import java.util.List;
-
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 
 @Service
@@ -22,29 +20,22 @@ public class CategoryService {
     private final MachineRepository machineRepository;
     private final PrimarySequenceService primarySequenceService;
 
-    public CategoryService(final CategoryRepository categoryRepository,
-                           final MachineRepository machineRepository, PrimarySequenceService primarySequenceService) {
+    public CategoryService(final CategoryRepository categoryRepository, final MachineRepository machineRepository, PrimarySequenceService primarySequenceService) {
         this.categoryRepository = categoryRepository;
         this.machineRepository = machineRepository;
         this.primarySequenceService = primarySequenceService;
     }
 
 
-    @Cacheable(value = "longCache", key = "'allCategories'")
     public List<CategoryDTO> findAll() {
         final List<Category> categories = categoryRepository.findAll(Sort.by("id"));
-        return categories.stream()
-                .map(category -> mapToDTO(category, new CategoryDTO()))
-                .toList();
+        return categories.stream().map(category -> mapToDTO(category, new CategoryDTO())).toList();
     }
 
     public CategoryDTO get(final Long id) {
-        return categoryRepository.findById(id)
-                .map(category -> mapToDTO(category, new CategoryDTO()))
-                .orElseThrow(NotFoundException::new);
+        return categoryRepository.findById(id).map(category -> mapToDTO(category, new CategoryDTO())).orElseThrow(NotFoundException::new);
     }
 
-    @CacheEvict(value = "longCache",allEntries = true)
     public Long create(final CategoryDTO categoryDTO) {
         final Category category = new Category();
         category.setId(primarySequenceService.getNextValue());
@@ -52,15 +43,12 @@ public class CategoryService {
         return categoryRepository.save(category).getId();
     }
 
-    @CacheEvict(value = "longCache",allEntries = true)
     public void update(final Long id, final CategoryDTO categoryDTO) {
-        final Category category = categoryRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+        final Category category = categoryRepository.findById(id).orElseThrow(NotFoundException::new);
         mapToEntity(categoryDTO, category);
         categoryRepository.save(category);
     }
 
-    @CacheEvict(value = "longCache",allEntries = true)
     public void delete(final Long id) {
         categoryRepository.deleteById(id);
     }
@@ -80,8 +68,7 @@ public class CategoryService {
 
     public ReferencedWarning getReferencedWarning(final Long id) {
         final ReferencedWarning referencedWarning = new ReferencedWarning();
-        final Category category = categoryRepository.findById(id)
-                .orElseThrow(NotFoundException::new);
+        final Category category = categoryRepository.findById(id).orElseThrow(NotFoundException::new);
         final Machine categoryMachine = machineRepository.findFirstByCategory(category);
         if (categoryMachine != null) {
             referencedWarning.setKey("category.machine.category.referenced");

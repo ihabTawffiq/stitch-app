@@ -26,9 +26,6 @@ public class SparePartMainCategory {
     @Size(max = 1080)
     private String description;
 
-    @DocumentReference(lazy = true)
-    private Set<SparePartCategory> sparePartCategory;
-
     @NotNull
     @Size(max = 1080)
     private String logoURL;

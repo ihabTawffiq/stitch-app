@@ -35,18 +35,18 @@ public class OrderService {
         return orderRepository.save(mapRequestToEntity(orderRequest)).getId();
     }
 
-    public List<OrderResponse> getOrdersByStatus(OrderStatus orderStatus){
+    public List<OrderResponse> getOrdersByStatus(OrderStatus orderStatus) {
         List<Order> orders = orderRepository.findAllByStatus(orderStatus);
         return orders.parallelStream()
                 .map(this::mapEntityToResponse)
                 .toList();
     }
 
-    public List<OrderResponse> getAllOrders(final Integer offset,final Integer limit){
+    public List<OrderResponse> getAllOrders(final Integer offset, final Integer limit) {
         List<Order> orders = new ArrayList<>();
-        if(offset.equals(-1)){
+        if (offset.equals(-1)) {
             orders = orderRepository.findAll(Sort.by("id"));
-        }else {
+        } else {
             orders = orderRepository.findAll(PageRequest.of(offset, limit)).getContent();
         }
         return orders.parallelStream()
@@ -54,28 +54,29 @@ public class OrderService {
                 .toList();
     }
 
-    public List<OrderResponse> getAllOrdersByCreatedDate(final LocalDate createdDate){
+    public List<OrderResponse> getAllOrdersByCreatedDate(final LocalDate createdDate) {
         List<Order> orders = orderRepository.findAllByCreateAt(createdDate);
         return orders.parallelStream()
                 .map(this::mapEntityToResponse)
                 .toList();
     }
 
-    public List<OrderResponse> getAllOrdersByPhoneNumber(final String phoneNumber){
+    public List<OrderResponse> getAllOrdersByPhoneNumber(final String phoneNumber) {
         List<Order> orders = orderRepository.findAllByPhoneNumber(phoneNumber);
         return orders.parallelStream()
                 .map(this::mapEntityToResponse)
                 .toList();
     }
 
-    public OrderResponse getOrderById(Long id){
+    public OrderResponse getOrderById(Long id) {
         Order order = orderRepository.findById(id)
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
         return mapEntityToResponse(order);
     }
-    public Long updateOrderStatus(final Long orderId ,final OrderStatus orderStatus){
+
+    public Long updateOrderStatus(final Long orderId, final OrderStatus orderStatus) {
         Optional<Order> order = orderRepository.findById(orderId);
-        if(order.isPresent()){
+        if (order.isPresent()) {
             order.get().setStatus(orderStatus);
             orderRepository.save(order.get());
         }
@@ -86,7 +87,7 @@ public class OrderService {
         if (orderRequest == null) throw new IllegalArgumentException("orderRequest cannot be null");
         double totalPrice = 0;
         Order order = new Order();
-        if(Objects.nonNull(orderRequest.getMachines())) {
+        if (Objects.nonNull(orderRequest.getMachines())) {
             Map<Long, Long> machineIdCounts = orderRequest.getMachines().stream()
                     .collect(Collectors.groupingBy(id -> id, Collectors.counting()));
 
@@ -100,17 +101,17 @@ public class OrderService {
                         return orderItem;
                     })
                     .toList();
-            totalPrice+= orderItems.stream()
+            totalPrice += orderItems.stream()
                     .mapToDouble(item -> item.getMachine().getFinalPrice() * item.getQuantity())
                     .sum();
             order.setMachines(orderItems);
         }
 
-        if(Objects.nonNull(orderRequest.getSpearParts())){
+        if (Objects.nonNull(orderRequest.getSpearParts())) {
             Map<Long, Long> spearPartsIdCounts = orderRequest.getSpearParts().stream()
                     .collect(Collectors.groupingBy(id -> id, Collectors.counting()));
 
-            List<SpearPart> uniqueSpearParts= spearPartRepository.findByIdIn(new ArrayList<>(spearPartsIdCounts.keySet()));
+            List<SpearPart> uniqueSpearParts = spearPartRepository.findByIdIn(new ArrayList<>(spearPartsIdCounts.keySet()));
 
             List<SpearPartOrderItem> spearPartOrderItems = uniqueSpearParts.stream()
                     .map(spearPart -> {
@@ -120,7 +121,7 @@ public class OrderService {
                         return spearPartOrderItem;
                     })
                     .toList();
-            totalPrice+= spearPartOrderItems.stream()
+            totalPrice += spearPartOrderItems.stream()
                     .mapToDouble(item -> item.getSpearPart().getPrice() * item.getQuantity())
                     .sum();
             order.setSpearParts(spearPartOrderItems);
@@ -142,7 +143,7 @@ public class OrderService {
     private OrderResponse mapEntityToResponse(final Order order) {
         if (order == null) throw new IllegalArgumentException("order cannot be null");
         OrderResponse orderResponse = new OrderResponse();
-        if(Objects.nonNull(order.getMachines())){
+        if (Objects.nonNull(order.getMachines())) {
             List<String> machineNames = order.getMachines().stream()
                     .map(item -> item.getMachine().getBrand().getName() + " " + item.getMachine().getModel() +
                             " (x" + item.getQuantity() + ")")
@@ -150,7 +151,7 @@ public class OrderService {
             orderResponse.setMachines(machineNames);
         }
 
-        if(Objects.nonNull(order.getSpearParts())){
+        if (Objects.nonNull(order.getSpearParts())) {
             List<String> spearPartNames = order.getSpearParts().stream()
                     .map(item -> item.getSpearPart().getName() + " " +
                             " (x" + item.getQuantity() + ")")

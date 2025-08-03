@@ -24,8 +24,6 @@ public class SparePartMainCategoryDTO implements Serializable {
     @Size(max = 1080)
     private String description;
 
-    private Set<SparePartCategoryDTO> sparePartCategories;
-
     @NotNull
     @Size(max = 1080)
     private String logoURL;

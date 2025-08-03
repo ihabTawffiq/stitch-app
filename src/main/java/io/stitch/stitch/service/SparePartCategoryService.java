@@ -37,13 +37,18 @@ public class SparePartCategoryService {
         return sparePartCategories.stream().map(sparePartCategory -> mapToDTO(sparePartCategory, new SparePartCategoryDTO())).toList();
     }
 
-    public List<SparePartCategoryDTO> findAllHomepageSparePartCategory() {
-        final List<SparePartCategory> sparePartCategories = sparePartCategoryRepository.findAllByIsHomepageCategory(Boolean.TRUE,Sort.by("id"));
-        return sparePartCategories.stream().map(sparePartCategory -> mapToDTO(sparePartCategory, new SparePartCategoryDTO())).toList();
-    }
-
     public SparePartCategoryDTO get(final Long id) {
         return sparePartCategoryRepository.findById(id).map(sparePartCategory -> mapToDTO(sparePartCategory, new SparePartCategoryDTO())).orElseThrow(NotFoundException::new);
+    }
+
+    public List<SparePartCategoryDTO> getByMainCategory(final Long id) {
+        Optional<SparePartMainCategory> optionalSparePartMainCategory = sparePartMainCategoryRepository.findById(id);
+        if (optionalSparePartMainCategory.isPresent()) {
+            final List<SparePartCategory> sparePartCategories = sparePartCategoryRepository.findAllBySparePartMainCategory(optionalSparePartMainCategory.get());
+            return sparePartCategories.stream().map(sparePartCategory -> mapToDTO(sparePartCategory, new SparePartCategoryDTO())).toList();
+        }else {
+            throw new NotFoundException("Category not found");
+        }
     }
 
     public Long create(final SparePartCategoryDTO sparePartCategoryDTO) {
@@ -57,12 +62,6 @@ public class SparePartCategoryService {
     public void update(final Long id, final SparePartCategoryDTO sparePartCategoryDTO) {
         final SparePartCategory sparePartCategory = sparePartCategoryRepository.findById(id).orElseThrow(NotFoundException::new);
         mapToEntity(sparePartCategoryDTO, sparePartCategory);
-        sparePartCategoryRepository.save(sparePartCategory);
-    }
-
-    public void updateHomepageSparePartCategory(final Long brandId) {
-        final SparePartCategory sparePartCategory = sparePartCategoryRepository.findById(brandId).orElseThrow(NotFoundException::new);
-        sparePartCategory.setIsHomepageCategory(!sparePartCategory.getIsHomepageCategory());
         sparePartCategoryRepository.save(sparePartCategory);
     }
 

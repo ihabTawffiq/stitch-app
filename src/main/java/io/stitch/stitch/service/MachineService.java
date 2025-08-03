@@ -17,8 +17,6 @@ import io.stitch.stitch.repos.CategoryRepository;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.repos.TagRepository;
 import io.stitch.stitch.util.NotFoundException;
-import org.springframework.cache.annotation.CacheEvict;
-import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -33,6 +31,7 @@ public class MachineService {
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
     private final PrimarySequenceService primarySequenceService;
+
     public MachineService(final MachineRepository machineRepository, final BrandRepository brandRepository, final TagRepository tagRepository, final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService) {
         this.machineRepository = machineRepository;
         this.brandRepository = brandRepository;
@@ -50,7 +49,6 @@ public class MachineService {
         return response;
     }
 
-    @Cacheable(value = "longCache", key = "'allMachines:' + #offset + ':' + #limit")
     public List<AppMachineDTO> findAll(final Integer offset, final Integer limit) {
         List<Machine> machineList;
         if (offset == -1) {
@@ -65,26 +63,23 @@ public class MachineService {
         return machineRepository.findById(id).map(machine -> mapToAppDTO(machine, new AppMachineDTO())).orElseThrow(NotFoundException::new);
     }
 
-    @CacheEvict(value = "longCache", allEntries = true)
     public Long create(final MachineDTO machineDTO) {
         final Machine machine = new Machine();
         machine.setId(primarySequenceService.getNextValue());
         mapToEntity(machineDTO, machine);
         return machineRepository.save(machine).getId();
     }
-    @CacheEvict(value = "longCache", allEntries = true)
+
     public void update(final Long id, final MachineDTO machineDTO) {
         final Machine machine = machineRepository.findById(id).orElseThrow(NotFoundException::new);
         mapToEntity(machineDTO, machine);
         machineRepository.save(machine);
     }
 
-    @CacheEvict(value = "longCache", allEntries = true)
     public void delete(final Long id) {
         machineRepository.deleteById(id);
     }
 
-    @Cacheable(value = "longCache", key = "'machinesByTag:' + T(java.util.Arrays).hashCode(#tagIds) + ':' + #offset + ':' + #limit")
     public List<AppMachineDTO> getMachinesByTag(final Long[] tagIds, final Integer offset, final Integer limit) {
         List<Machine> machineList;
         List<Tag> tagList = tagRepository.findAllByIdIn(Arrays.stream(tagIds).toList());
@@ -101,7 +96,6 @@ public class MachineService {
         return machineDTOList;
     }
 
-    @Cacheable(value = "longCache", key = "'machinesByTag:' + #categoryId + ':' + #offset + ':' + #limit")
     public List<AppMachineDTO> getMachinesByCategory(final Long categoryId, final Integer offset, final Integer limit) {
 
         Optional<Category> categoryOptional = categoryRepository.findById(categoryId);
@@ -123,7 +117,6 @@ public class MachineService {
         return null;
     }
 
-    @Cacheable(value = "longCache", key = "'machinesByBrand:' + #brandId + ':' + #offset + ':' + #limit")
     public List<AppMachineDTO> getMachinesByBrand(final Long brandId, final Integer offset, final Integer limit) {
         Optional<Brand> brandOptional = brandRepository.findById(brandId);
         if (brandOptional.isPresent()) {
@@ -143,7 +136,7 @@ public class MachineService {
         return null;
 
     }
-    @Cacheable(value = "longCache", key = "'machinesByModel:' + #model")
+
     public List<AppMachineDTO> getMachinesByModel(final String model) {
         List<Machine> machineList = machineRepository.findAllByModel(model);
         List<AppMachineDTO> machineDTOList = new ArrayList<>();
@@ -153,7 +146,6 @@ public class MachineService {
         return machineDTOList;
     }
 
-    @Cacheable(value = "longCache", key = "'filterMachines:' + T(java.util.Objects).hash(#tagIds) + ':' + T(java.util.Objects).hash(#brandIds) + ':' + T(java.util.Objects).hash(#categoryIds)")
     public List<AppMachineDTO> filterMachines(List<Long> tagIds, List<Long> brandIds, List<Long> categoryIds) {
         List<Tag> tagList;
         List<Brand> brandList;
@@ -175,7 +167,7 @@ public class MachineService {
         } else {
             categoryList = categoryRepository.findAll();
         }
-        
+
         List<Machine> machineList = machineRepository.findAllByBrandInAndCategoryInAndTagsIn(brandList, categoryList, tagList);
         List<AppMachineDTO> machineDTOList = new ArrayList<>();
         for (Machine machine : machineList) {

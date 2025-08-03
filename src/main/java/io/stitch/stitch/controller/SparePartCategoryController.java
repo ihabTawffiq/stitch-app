@@ -36,6 +36,11 @@ public class SparePartCategoryController {
         return ResponseEntity.ok(sparePartCategoryService.get(id));
     }
 
+    @GetMapping("/main/{id}")
+    public ResponseEntity<List<SparePartCategoryDTO>> getSparePartCategoryByMainCategory(@PathVariable(name = "id") final Long id) {
+        return ResponseEntity.ok(sparePartCategoryService.getByMainCategory(id));
+    }
+
     @PostMapping
     @ApiResponse(responseCode = "201")
     public ResponseEntity<Long> createSparePartCategory(@RequestBody @Valid final SparePartCategoryDTO sparePartCategoryDTO) {

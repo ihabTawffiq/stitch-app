@@ -3,7 +3,6 @@ package io.stitch.stitch.service;
 import io.stitch.stitch.dto.SparePartCategoryDTO;
 import io.stitch.stitch.dto.requets.SpearPartRequest;
 import io.stitch.stitch.dto.response.SpearPartResponse;
-import io.stitch.stitch.entity.Brand;
 import io.stitch.stitch.entity.SparePartCategory;
 import io.stitch.stitch.entity.SpearPart;
 import io.stitch.stitch.repos.SparePartCategoryRepository;
@@ -15,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 
 @Service
@@ -69,14 +67,14 @@ public class SpearPartService {
         return spearPartResponse;
     }
 
-    public List<SpearPartResponse> getSparePartsByCategory(final Long id,final Integer offset, final Integer limit) {
+    public List<SpearPartResponse> getSparePartsByCategory(final Long id, final Integer offset, final Integer limit) {
         final List<SpearPartResponse> spearPartResponseList = new ArrayList<>();
         final SparePartCategory sparePartCategory = sparePartCategoryRepository.findById(id).orElseThrow(NotFoundException::new);
-         List<SpearPart> spearPartList;
+        List<SpearPart> spearPartList;
         if (limit == -1) {
             spearPartList = spearPartRepository.findAllBySparePartCategory(sparePartCategory);
-        }else {
-            spearPartList = spearPartRepository.findAllBySparePartCategory(sparePartCategory,PageRequest.of(offset, limit));
+        } else {
+            spearPartList = spearPartRepository.findAllBySparePartCategory(sparePartCategory, PageRequest.of(offset, limit));
         }
         spearPartList.forEach(spearPart -> {
             final SpearPartResponse spearPartResponse = new SpearPartResponse();
