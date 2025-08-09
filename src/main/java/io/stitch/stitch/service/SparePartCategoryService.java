@@ -77,6 +77,7 @@ public class SparePartCategoryService {
         sparePartCategoryDTO.setLogoURL(sparePartCategory.getLogoURL());
         sparePartCategoryDTO.setIsHomepageCategory(sparePartCategory.getIsHomepageCategory());
         sparePartCategoryDTO.setMainCategoryId(sparePartCategory.getSparePartMainCategory().getId());
+        sparePartCategoryDTO.setMainCategoryName(sparePartCategory.getSparePartMainCategory().getName());
         return sparePartCategoryDTO;
     }
 
