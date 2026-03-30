@@ -31,13 +31,15 @@ public class MachineService {
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
     private final PrimarySequenceService primarySequenceService;
+    private final CurrencyScheduler currencyScheduler;
 
-    public MachineService(final MachineRepository machineRepository, final BrandRepository brandRepository, final TagRepository tagRepository, final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService) {
+    public MachineService(final MachineRepository machineRepository, final BrandRepository brandRepository, final TagRepository tagRepository, final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService, CurrencyScheduler currencyScheduler) {
         this.machineRepository = machineRepository;
         this.brandRepository = brandRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
         this.primarySequenceService = primarySequenceService;
+        this.currencyScheduler = currencyScheduler;
     }
 
     static Map<String, Object> convertToResponse(final Page<Machine> pagePersons) {
@@ -216,8 +218,8 @@ public class MachineService {
         machineDTO.setDescription(machine.getDescription());
         machineDTO.setStock(machine.getStock());
         machineDTO.setMainImageUrl(machine.getMainImageUrl());
-        machineDTO.setFinalPrice(machine.getFinalPrice());
-        machineDTO.setInitialPrice(machine.getInitialPrice());
+        machineDTO.setFinalPrice(currencyScheduler.usdToEgp(machine.getFinalPrice()));
+        machineDTO.setInitialPrice(currencyScheduler.usdToEgp(machine.getInitialPrice()));
         machineDTO.setBrand(machine.getBrand() == null ? null : BrandMapper.mapToAppDTO(machine.getBrand(), new BrandDTO()));
         machineDTO.setTags(machine.getTags().stream().map(tag -> TagMapper.mapToAppDTO(tag, new TagDTO())).toList());
         machineDTO.setCategory(machine.getCategory() == null ? null : CategoryMapper.mapToAppDTO(machine.getCategory(), new CategoryDTO()));
