@@ -5,17 +5,11 @@ import io.stitch.stitch.dto.CategoryDTO;
 import io.stitch.stitch.dto.MachineDTO;
 import io.stitch.stitch.dto.TagDTO;
 import io.stitch.stitch.dto.app.AppMachineDTO;
-import io.stitch.stitch.entity.Brand;
-import io.stitch.stitch.entity.Category;
-import io.stitch.stitch.entity.Machine;
-import io.stitch.stitch.entity.Tag;
+import io.stitch.stitch.entity.*;
 import io.stitch.stitch.mappers.BrandMapper;
 import io.stitch.stitch.mappers.CategoryMapper;
 import io.stitch.stitch.mappers.TagMapper;
-import io.stitch.stitch.repos.BrandRepository;
-import io.stitch.stitch.repos.CategoryRepository;
-import io.stitch.stitch.repos.MachineRepository;
-import io.stitch.stitch.repos.TagRepository;
+import io.stitch.stitch.repos.*;
 import io.stitch.stitch.util.NotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,15 +25,15 @@ public class MachineService {
     private final TagRepository tagRepository;
     private final CategoryRepository categoryRepository;
     private final PrimarySequenceService primarySequenceService;
-    private final CurrencyScheduler currencyScheduler;
+    private final USDRepository usdRepository;
 
-    public MachineService(final MachineRepository machineRepository, final BrandRepository brandRepository, final TagRepository tagRepository, final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService, CurrencyScheduler currencyScheduler) {
+    public MachineService(final MachineRepository machineRepository, final BrandRepository brandRepository, final TagRepository tagRepository, final CategoryRepository categoryRepository, PrimarySequenceService primarySequenceService, CurrencyScheduler currencyScheduler, USDRepository usdRepository) {
         this.machineRepository = machineRepository;
         this.brandRepository = brandRepository;
         this.tagRepository = tagRepository;
         this.categoryRepository = categoryRepository;
         this.primarySequenceService = primarySequenceService;
-        this.currencyScheduler = currencyScheduler;
+        this.usdRepository = usdRepository;
     }
 
     static Map<String, Object> convertToResponse(final Page<Machine> pagePersons) {
@@ -213,12 +207,13 @@ public class MachineService {
     }
 
     private AppMachineDTO mapToAppDTO(final Machine machine, final AppMachineDTO machineDTO) {
+        Usd usd = usdRepository.findById(1L).get();
         machineDTO.setId(machine.getId());
         machineDTO.setModel(machine.getModel());
         machineDTO.setDescription(machine.getDescription());
         machineDTO.setStock(machine.getStock());
         machineDTO.setMainImageUrl(machine.getMainImageUrl());
-        machineDTO.setFinalPrice(machine.getFinalPrice());
+        machineDTO.setFinalPrice((double) Math.round(machine.getFinalPrice() * usd.getValue()));
         machineDTO.setInitialPrice(machine.getInitialPrice());
         machineDTO.setBrand(machine.getBrand() == null ? null : BrandMapper.mapToAppDTO(machine.getBrand(), new BrandDTO()));
         machineDTO.setTags(machine.getTags().stream().map(tag -> TagMapper.mapToAppDTO(tag, new TagDTO())).toList());

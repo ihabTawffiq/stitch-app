@@ -5,8 +5,10 @@ import io.stitch.stitch.dto.requets.SpearPartRequest;
 import io.stitch.stitch.dto.response.SpearPartResponse;
 import io.stitch.stitch.entity.SparePartCategory;
 import io.stitch.stitch.entity.SpearPart;
+import io.stitch.stitch.entity.Usd;
 import io.stitch.stitch.repos.SparePartCategoryRepository;
 import io.stitch.stitch.repos.SpearPartRepository;
+import io.stitch.stitch.repos.USDRepository;
 import io.stitch.stitch.util.NotFoundException;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
@@ -23,11 +25,14 @@ public class SpearPartService {
     private final PrimarySequenceService primarySequenceService;
     private final SpearPartRepository spearPartRepository;
     private final SparePartCategoryRepository sparePartCategoryRepository;
+    private final USDRepository usdRepository;
 
-    public SpearPartService(PrimarySequenceService primarySequenceService, SpearPartRepository spearPartRepository, SparePartCategoryRepository sparePartCategoryRepository) {
+
+    public SpearPartService(PrimarySequenceService primarySequenceService, SpearPartRepository spearPartRepository, SparePartCategoryRepository sparePartCategoryRepository, USDRepository usdRepository) {
         this.primarySequenceService = primarySequenceService;
         this.spearPartRepository = spearPartRepository;
         this.sparePartCategoryRepository = sparePartCategoryRepository;
+        this.usdRepository = usdRepository;
     }
 
     public Long create(final SpearPartRequest spearPartRequest) {
@@ -99,9 +104,10 @@ public class SpearPartService {
     }
 
     private void mapEntityToResponse(final SpearPart spearPart, final SpearPartResponse spearPartResponse) {
+        Usd usd = usdRepository.findById(1L).get();
         spearPartResponse.setId(spearPart.getId());
         spearPartResponse.setName(spearPart.getName());
-        spearPartResponse.setPrice(spearPart.getPrice());
+        spearPartResponse.setPrice((double) Math.round(spearPart.getPrice() * usd.getValue()));
         spearPartResponse.setImageURL(spearPart.getImageURL());
         spearPartResponse.setDescription(spearPart.getDescription());
         SparePartCategoryDTO sparePartCategoryDTO = getSparePartCategoryDTO(spearPart);

@@ -30,7 +30,10 @@ public class CurrencyScheduler {
         egp = Math.round(egp * 10.0) / 10.0;
 
         Usd usd = usdRepo.findById(1L).orElse(new Usd());
-        usd.setValue(egp);
-        usdRepo.save(usd);
+        if(Double.compare(usd.getValue(), egp) != 0) {
+            usd.setValue(egp);
+            usdRepo.save(usd);
+        }
+
     }
 }
