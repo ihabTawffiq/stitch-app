@@ -218,8 +218,8 @@ public class MachineService {
         machineDTO.setDescription(machine.getDescription());
         machineDTO.setStock(machine.getStock());
         machineDTO.setMainImageUrl(machine.getMainImageUrl());
-        machineDTO.setFinalPrice(currencyScheduler.usdToEgp(machine.getFinalPrice()));
-        machineDTO.setInitialPrice(currencyScheduler.usdToEgp(machine.getInitialPrice()));
+        machineDTO.setFinalPrice(machine.getFinalPrice());
+        machineDTO.setInitialPrice(machine.getInitialPrice());
         machineDTO.setBrand(machine.getBrand() == null ? null : BrandMapper.mapToAppDTO(machine.getBrand(), new BrandDTO()));
         machineDTO.setTags(machine.getTags().stream().map(tag -> TagMapper.mapToAppDTO(tag, new TagDTO())).toList());
         machineDTO.setCategory(machine.getCategory() == null ? null : CategoryMapper.mapToAppDTO(machine.getCategory(), new CategoryDTO()));
