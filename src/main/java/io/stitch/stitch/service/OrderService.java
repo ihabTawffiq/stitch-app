@@ -7,6 +7,7 @@ import io.stitch.stitch.entity.*;
 import io.stitch.stitch.repos.MachineRepository;
 import io.stitch.stitch.repos.OrderRepository;
 import io.stitch.stitch.repos.SpearPartRepository;
+import io.stitch.stitch.repos.USDRepository;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
@@ -22,13 +23,15 @@ public class OrderService {
     private final PrimarySequenceService primarySequenceService;
     private final MachineRepository machineRepository;
     private final SpearPartRepository spearPartRepository;
+    private final USDRepository usdRepository;
 
 
-    public OrderService(OrderRepository orderRepository, PrimarySequenceService primarySequenceService, MachineRepository machineRepository, SpearPartRepository spearPartRepository) {
+    public OrderService(OrderRepository orderRepository, PrimarySequenceService primarySequenceService, MachineRepository machineRepository, SpearPartRepository spearPartRepository, USDRepository usdRepository) {
         this.orderRepository = orderRepository;
         this.primarySequenceService = primarySequenceService;
         this.machineRepository = machineRepository;
         this.spearPartRepository = spearPartRepository;
+        this.usdRepository = usdRepository;
     }
 
     public Long createOrder(OrderRequest orderRequest) {
@@ -141,6 +144,7 @@ public class OrderService {
 
 
     private OrderResponse mapEntityToResponse(final Order order) {
+        Usd usd = usdRepository.findById(1L).get();
         if (order == null) throw new IllegalArgumentException("order cannot be null");
         OrderResponse orderResponse = new OrderResponse();
         if (Objects.nonNull(order.getMachines())) {
@@ -162,7 +166,7 @@ public class OrderService {
 
         orderResponse.setCreateDate(order.getCreateAt());
         orderResponse.setOrderId(order.getId());
-        orderResponse.setPrice(order.getPrice());
+        orderResponse.setPrice((double) Math.round(order.getPrice() * usd.getValue()));
         orderResponse.setFullName(order.getFullName());
         orderResponse.setAddress(order.getAddress());
         orderResponse.setPhoneNumber(order.getPhoneNumber());

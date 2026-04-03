@@ -173,12 +173,13 @@ public class MachineService {
     }
 
     private MachineDTO mapToDTO(final Machine machine, final MachineDTO machineDTO) {
+        Usd usd = usdRepository.findById(1L).get();
         machineDTO.setId(machine.getId());
         machineDTO.setModel(machine.getModel());
         machineDTO.setDescription(machine.getDescription());
         machineDTO.setStock(machine.getStock());
         machineDTO.setMainImageUrl(machine.getMainImageUrl());
-        machineDTO.setFinalPrice(machine.getFinalPrice());
+        machineDTO.setFinalPrice((double) Math.round(machine.getFinalPrice() * usd.getValue()) );
         machineDTO.setInitialPrice(machine.getInitialPrice());
         machineDTO.setBrand(machine.getBrand() == null ? null : machine.getBrand().getId());
         machineDTO.setTags(machine.getTags().stream().map(Tag::getId).toList());
